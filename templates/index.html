@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkinExpert 🌿</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <!-- Tombol Settings (pojok kiri atas) -->
+  <button class="settings-btn" id="settingsBtn" aria-label="Buka menu">⚙️</button>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay" onclick="toggleMenu(false)"></div>
+
+  <!-- Sidebar Menu -->
+  <aside class="sidebar" id="sidebar">
+    <p class="sidebar-title">Menu SkinExpert</p>
+    <a href="{{ url_for('index') }}"><span class="icon">🏠</span> Beranda</a>
+    <a href="{{ url_for('gejala_list') }}"><span class="icon">🔍</span> Data Gejala</a>
+    <a href="{{ url_for('kondisi_list') }}"><span class="icon">🌿</span> Kondisi Kulit</a>
+    <a href="{{ url_for('konsultasi') }}"><span class="icon">💬</span> Konsultasi</a>
+    <a href="{{ url_for('riwayat') }}"><span class="icon">📋</span> Riwayat</a>
+  </aside>
+
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}{% for cat, msg in messages %}
+        <div class="alert alert-{{cat}}">{{ msg }}</div>
+      {% endfor %}{% endif %}
+    {% endwith %}
+
+    {# ==================== HALAMAN HOME ==================== #}
+    {% if page == 'home' %}
+      <div class="hero">
+        <div class="hero-icon">🌿</div>
+        <h1>Selamat Datang di SkinExpert</h1>
+        <p class="hero-sub">Sistem Pakar Diagnosis Kondisi Kulit Wajah</p>
+        <p class="hero-desc">
+          Mendeteksi indikasi kondisi kulit wajah Anda menggunakan metode <strong>Backward Chaining</strong>
+          berdasarkan gejala klinis yang dialami. Cepat, akurat, dan mudah digunakan.
+        </p>
+        <a href="{{ url_for('konsultasi') }}" class="btn btn-primary btn-lg">💬 Mulai Konsultasi</a>
+        <p class="hero-tip">✨ Klik tombol <strong>⚙️</strong> di pojok kiri atas untuk membuka menu navigasi ✨</p>
+      </div>
+
+    {# ==================== HALAMAN GEJALA ==================== #}
+    {% elif page == 'gejala' %}
+      <h1>🔍 Data Gejala</h1>
+      <div class="card">
+        <h2>{% if edit %}✏️ Edit Gejala{% else %}➕ Tambah Gejala{% endif %}</h2>
+        <form method="post" action="{% if edit %}{{ url_for('gejala_edit', gid=edit.id) }}{% else %}{{ url_for('gejala_tambah') }}{% endif %}">
+          <div class="form-row">
+            <div class="form-group"><label>Kode</label><input name="kode" value="{{ edit.kode if edit else '' }}" required maxlength="5" placeholder="G01"></div>
+            <div class="form-group"><label>Nama Gejala</label><input name="nama" value="{{ edit.nama if edit else '' }}" required></div>
+            <div class="form-group full"><label>Deskripsi</label><input name="deskripsi" value="{{ edit.deskripsi if edit else '' }}"></div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">{{ '💾 Simpan' if edit else '➕ Tambah' }}</button>
+            {% if edit %}<a href="{{ url_for('gejala_list') }}" class="btn btn-secondary">Batal</a>{% endif %}
+          </div>
+        </form>
+      </div>
+      <div class="card">
+        <h2>Daftar Gejala ({{ data|length }})</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Kode</th><th>Nama</th><th>Deskripsi</th><th>Aksi</th></tr></thead>
+            <tbody>
+            {% for g in data %}
+              <tr>
+                <td><span class="badge">{{ g.kode }}</span></td>
+                <td>{{ g.nama }}</td>
+                <td class="muted">{{ g.deskripsi or '-' }}</td>
+                <td class="actions">
+                  <a href="{{ url_for('gejala_edit', gid=g.id) }}" class="btn btn-sm btn-warning">✏️ Edit</a>
+                  <form method="post" action="{{ url_for('gejala_hapus', gid=g.id) }}" onsubmit="return confirm('Hapus gejala ini?')" style="display:inline">
+                    <button class="btn btn-sm btn-danger">🗑️ Hapus</button>
+                  </form>
+                </td>
+              </tr>
+            {% else %}
+              <tr><td colspan="4" class="muted">Belum ada data.</td></tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    {# ==================== HALAMAN KONDISI ==================== #}
+    {% elif page == 'kondisi' %}
+      <h1>🌿 Data Kondisi Kulit</h1>
+      <div class="card">
+        <h2>{% if edit %}✏️ Edit Kondisi{% else %}➕ Tambah Kondisi{% endif %}</h2>
+        <form method="post" action="{% if edit %}{{ url_for('kondisi_edit', kid=edit.id) }}{% else %}{{ url_for('kondisi_tambah') }}{% endif %}">
+          <div class="form-row">
+            <div class="form-group"><label>Kode</label><input name="kode" value="{{ edit.kode if edit else '' }}" required maxlength="5" placeholder="K01"></div>
+            <div class="form-group"><label>Nama Kondisi</label><input name="nama" value="{{ edit.nama if edit else '' }}" required></div>
+            <div class="form-group full"><label>Deskripsi</label><textarea name="deskripsi">{{ edit.deskripsi if edit else '' }}</textarea></div>
+            <div class="form-group full"><label>Saran / Solusi</label><textarea name="saran">{{ edit.saran if edit else '' }}</textarea></div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">{{ '💾 Simpan' if edit else '➕ Tambah' }}</button>
+            {% if edit %}<a href="{{ url_for('kondisi_list') }}" class="btn btn-secondary">Batal</a>{% endif %}
+          </div>
+        </form>
+      </div>
+      <div class="card">
+        <h2>Daftar Kondisi Kulit ({{ data|length }})</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Kode</th><th>Nama</th><th>Saran Penanganan</th><th>Rule Prasyarat</th><th>Aksi</th></tr></thead>
+            <tbody>
+            {% for k in data %}
+              <tr>
+                <td><span class="badge">{{ k.kode }}</span></td>
+                <td>{{ k.nama }}</td>
+                <td class="muted">{{ k.saran or '-' }}</td>
+                <td>{{ rule_count.get(k.id, 0) }} gejala</td>
+                <td class="actions">
+                  <a href="{{ url_for('kondisi_rule', kid=k.id) }}" class="btn btn-sm btn-primary">🧩 Rule</a>
+                  <a href="{{ url_for('kondisi_edit', kid=k.id) }}" class="btn btn-sm btn-warning">✏️ Edit</a>
+                  <form method="post" action="{{ url_for('kondisi_hapus', kid=k.id) }}" onsubmit="return confirm('Hapus kondisi ini?')" style="display:inline">
+                    <button class="btn btn-sm btn-danger">🗑️ Hapus</button>
+                  </form>
+                </td>
+              </tr>
+            {% else %}
+              <tr><td colspan="5" class="muted">Belum ada data.</td></tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    {# ==================== HALAMAN RULE ==================== #}
+    {% elif page == 'rule' %}
+      <h1>🧩 Atur Rule: <span class="badge">{{ k.kode }}</span> {{ k.nama }}</h1>
+      <form method="post" class="card">
+        <p class="muted">Centang gejala yang menjadi <strong>syarat</strong> untuk membuktikan kondisi <strong>{{ k.nama }}</strong>.</p>
+        <div class="checkbox-grid">
+          {% for g in gejala %}
+            <label class="checkbox-item">
+              <input type="checkbox" name="gejala" value="{{ g.id }}" {% if g.id in selected %}checked{% endif %}>
+              <span><strong>{{ g.kode }}</strong> — {{ g.nama }}</span>
+            </label>
+          {% endfor %}
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary">💾 Simpan Rule</button>
+          <a href="{{ url_for('kondisi_list') }}" class="btn btn-secondary">Kembali</a>
+        </div>
+      </form>
+
+    {# ==================== HALAMAN KONSULTASI ==================== #}
+    {% elif page == 'konsultasi' %}
+      <h1>💬 Konsultasi Kondisi Kulit Wajah</h1>
+      <p class="muted" style="margin-bottom:1rem">Pilih gejala yang sedang dialami kulit wajah Anda, lalu klik <strong>Proses Diagnosa</strong>.</p>
+      <form method="post" action="{{ url_for('konsultasi_proses') }}" class="card">
+        <input type="text" id="filter" placeholder="🔍 Cari gejala..." class="search-input">
+        <div class="checkbox-grid" id="gejala-list">
+          {% for g in gejala %}
+            <label class="checkbox-item" data-nama="{{ g.nama|lower }}">
+              <input type="checkbox" name="gejala" value="{{ g.id }}">
+              <span><strong>{{ g.kode }}</strong> — {{ g.nama }}</span>
+            </label>
+          {% endfor %}
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary btn-lg">🔎 Proses Diagnosa</button>
+        </div>
+      </form>
+
+    {# ==================== HALAMAN HASIL ==================== #}
+    {% elif page == 'hasil' %}
+      <h1>📊 Hasil Diagnosa</h1>
+      <p class="muted" style="margin-bottom:1rem">{{ n_selected }} dari {{ n_gejala }} gejala dipilih.</p>
+
+      {% if top %}
+        <div class="result-box success">
+          <h2>🎯 Kesimpulan Utama</h2>
+          <h3>{{ top.kondisi.kode }} — {{ top.kondisi.nama }}</h3>
+          <p><strong>Tingkat Kecocokan:</strong> {{ top.score }}%</p>
+          <p style="margin-top:.5rem">{{ top.kondisi.deskripsi }}</p>
+          <h4>🩺 Solusi / Saran Penanganan:</h4>
+          <p>{{ top.kondisi.saran }}</p>
+          {% if top.score < 50 %}
+            <p class="muted" style="margin-top:.6rem">⚠️ Kecocokan rendah — sebaiknya periksa lebih lanjut atau tambahkan gejala.</p>
+          {% endif %}
+        </div>
+      {% else %}
+        <div class="result-box warning">
+          <h2>❌ Tidak Teridentifikasi</h2>
+          <p>Tidak ada kondisi yang cocok dengan gejala yang dipilih. Coba pilih gejala lain.</p>
+        </div>
+      {% endif %}
+
+      <div class="card">
+        <h2>🧠 Jejak Penalaran Backward Chaining</h2>
+        <p class="muted" style="margin-bottom:1rem">Sistem dimulai dari hipotesis kondisi kulit, lalu memverifikasi subgoal gejala yang harus terpenuhi.</p>
+        {% for t in trace %}
+          <div class="trace-item">
+            <div class="trace-header">
+              <span class="badge">{{ t.kondisi.kode }}</span>
+              <strong>{{ t.kondisi.nama }}</strong>
+              <span class="score-badge {% if t.full %}full{% else %}partial{% endif %}">{{ t.score }}%</span>
+            </div>
+            <div class="trace-body">
+              <p><strong>Aturan:</strong> IF
+                {% for g in t.matched_gejala + t.missing_gejala %}{{ g.kode }}{% if not loop.last %} AND {% endif %}{% endfor %}
+                THEN {{ t.kondisi.kode }}</p>
+              {% if t.matched_gejala %}
+                <p>✅ <strong>Subgoal terpenuhi:</strong>
+                  {% for g in t.matched_gejala %}{{ g.kode }} ({{ g.nama }}){% if not loop.last %}, {% endif %}{% endfor %}</p>
+              {% endif %}
+              {% if t.missing_gejala %}
+                <p>❌ <strong>Subgoal belum terpenuhi:</strong>
+                  {% for g in t.missing_gejala %}{{ g.kode }} ({{ g.nama }}){% if not loop.last %}, {% endif %}{% endfor %}</p>
+              {% endif %}
+              {% if t.full %}<p class="ok">🎉 Semua subgoal terpenuhi — hipotesis <strong>terbukti</strong>.</p>{% endif %}
+            </div>
+          </div>
+        {% else %}
+          <p class="muted">Tidak ada hipotesis yang memiliki jejak penalaran.</p>
+        {% endfor %}
+      </div>
+
+      <div class="form-actions">
+        <a href="{{ url_for('konsultasi') }}" class="btn btn-primary">🔄 Konsultasi Lagi</a>
+        <a href="{{ url_for('riwayat') }}" class="btn btn-secondary">📋 Riwayat</a>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">🏠 Beranda</a>
+      </div>
+
+    {# ==================== HALAMAN RIWAYAT ==================== #}
+    {% elif page == 'riwayat' %}
+      <h1>📋 Riwayat Konsultasi</h1>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Tanggal</th><th>Gejala Terpilih</th><th>Hasil</th><th>Aksi</th></tr></thead>
+            <tbody>
+            {% for r in data %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ r.tanggal }}</td>
+                <td class="muted">{{ r.gejala_terpilih }}</td>
+                <td><strong>{{ r.hasil }}</strong></td>
+                <td>
+                  <form method="post" action="{{ url_for('riwayat_hapus', rid=r.id) }}" onsubmit="return confirm('Hapus riwayat ini?')">
+                    <button class="btn btn-sm btn-danger">🗑️ Hapus</button>
+                  </form>
+                </td>
+              </tr>
+            {% else %}
+              <tr><td colspan="5" class="muted">Belum ada riwayat konsultasi.</td></tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    {% endif %}
+  </main>
+
+  <footer>© 2026 SkinExpert — Sistem Pakar Diagnosis Kulit Wajah Backward Chaining</footer>
+
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const settingsBtn = document.getElementById('settingsBtn');
+
+    function toggleMenu(force) {
+      const open = typeof force === 'boolean' ? force : !sidebar.classList.contains('open');
+      sidebar.classList.toggle('open', open);
+      overlay.classList.toggle('show', open);
+      settingsBtn.classList.toggle('active', open);
+    }
+    settingsBtn.addEventListener('click', () => toggleMenu());
+
+    const filter = document.getElementById('filter');
+    if (filter) {
+      filter.addEventListener('input', e => {
+        const q = e.target.value.toLowerCase();
+        document.querySelectorAll('#gejala-list .checkbox-item').forEach(el => {
+          el.style.display = el.dataset.nama.includes(q) ? '' : 'none';
+        });
+      });
+    }
+
+    document.querySelectorAll('.btn').forEach(b => {
+      b.addEventListener('mousemove', e => {
+        const r = b.getBoundingClientRect();
+        b.style.setProperty('--x', (e.clientX - r.left) + 'px');
+        b.style.setProperty('--y', (e.clientY - r.top) + 'px');
+      });
+    });
+
+    document.querySelectorAll('.sidebar a').forEach(a => {
+      a.addEventListener('click', () => toggleMenu(false));
+    });
+  </script>
+</body>
+</html>

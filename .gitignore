@@ -1,0 +1,26 @@
+# Project kulkas (abaikan sesuai arahan)
+1/
+
+# Environment & Secrets
+.env
+credentials.json
+token.json
+
+# Temporary & Cache
+.tmp/
+.vercel/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.bak
+*.log
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Dependencies
+node_modules/
