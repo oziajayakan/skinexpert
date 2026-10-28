@@ -2,6 +2,7 @@
 session_start();
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/proses/backward_chaining.php';
+require_once __DIR__ . '/includes/icons.php';
 
 $error = '';
 $hasilDiagnosa = null;
@@ -75,13 +76,13 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Konsultasi Pra-Diagnosis Kulit Wajah - SkinExpert 🌿</title>
+  <title>Konsultasi Pra-Diagnosis Kulit Wajah - SkinExpert</title>
   <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
 
   <!-- Tombol Navigasi Menu -->
-  <button class="settings-btn" id="settingsBtn" aria-label="Buka menu">⚙️</button>
+  <button class="settings-btn" id="settingsBtn" aria-label="Buka menu"><?= icon('settings', '', 22) ?></button>
 
   <!-- Overlay -->
   <div class="overlay" id="overlay" onclick="toggleMenu(false)"></div>
@@ -89,18 +90,20 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
   <!-- Sidebar Menu -->
   <aside class="sidebar" id="sidebar">
     <p class="sidebar-title">Menu SkinExpert</p>
-    <a href="index.php"><span class="icon">🏠</span> Beranda</a>
-    <a href="konsultasi.php"><span class="icon">💬</span> Konsultasi Kulit</a>
-    <a href="latihan.php"><span class="icon">🧪</span> Skenario Latihan (UNWAHA)</a>
-    <a href="admin/gejala.php"><span class="icon">🔍</span> Data Fakta Gejala (G)</a>
-    <a href="admin/kondisi.php"><span class="icon">🌿</span> Data Kondisi Kulit (H)</a>
-    <a href="admin/aturan.php"><span class="icon">🧩</span> Basis Aturan (R)</a>
-    <a href="riwayat.php"><span class="icon">📋</span> Riwayat Pemeriksaan</a>
+    <a href="index.php"><span class="icon"><?= icon('home', '', 18) ?></span> Beranda</a>
+    <a href="konsultasi.php"><span class="icon"><?= icon('chat', '', 18) ?></span> Konsultasi Kulit</a>
+    <a href="latihan.php"><span class="icon"><?= icon('flask', '', 18) ?></span> Skenario Latihan (UNWAHA)</a>
+    <a href="admin/gejala.php"><span class="icon"><?= icon('search', '', 18) ?></span> Data Fakta Gejala (G)</a>
+    <a href="admin/kondisi.php"><span class="icon"><?= icon('target', '', 18) ?></span> Data Kondisi Kulit (H)</a>
+    <a href="admin/aturan.php"><span class="icon"><?= icon('rule', '', 18) ?></span> Basis Aturan (R)</a>
+    <a href="riwayat.php"><span class="icon"><?= icon('clipboard', '', 18) ?></span> Riwayat Pemeriksaan</a>
   </aside>
 
   <main>
     <?php if (!empty($error)): ?>
-      <div class="alert alert-error" style="margin-bottom:1.5rem;"><?= htmlspecialchars($error) ?></div>
+      <div class="alert alert-error" style="margin-bottom:1.5rem;display:flex;align-items:center;gap:0.5rem;">
+        <?= icon('alert', '', 18) ?> <?= htmlspecialchars($error) ?>
+      </div>
     <?php endif; ?>
 
     <!-- WIZARD STEP -->
@@ -118,7 +121,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     <?php if ($hasilDiagnosa === null): ?>
       <!-- FORMULIR INPUT KONSULTASI -->
       <div class="card">
-        <h1>💬 Konsultasi Pra-Diagnosis Kondisi Kulit</h1>
+        <h1 style="display:flex;align-items:center;gap:0.6rem;">
+          <span style="color:var(--primary);"><?= icon('chat', '', 28) ?></span> Konsultasi Pra-Diagnosis Kondisi Kulit
+        </h1>
         <p class="muted" style="margin-bottom:1.5rem;">
           Pilih gejala klinis yang Anda rasakan. Sistem pakar akan menelusuri mundur (Backward Chaining) untuk membuktikan dugaan kondisi kulit wajah Anda.
         </p>
@@ -127,18 +132,18 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
           
           <!-- LANGKAH 1: TARGET HIPOTESIS -->
           <div style="margin-bottom:1.6rem;">
-            <label style="font-size:1rem;font-weight:700;display:block;margin-bottom:0.4rem;">
-              🎯 1. Pilih Dugaan Kondisi Kulit (Opsional)
+            <label style="font-size:1rem;font-weight:700;display:flex;align-items:center;gap:0.4rem;margin-bottom:0.4rem;">
+              <span style="color:#ea580c;"><?= icon('target', '', 18) ?></span> 1. Pilih Dugaan Kondisi Kulit (Opsional)
             </label>
             <p class="muted" style="font-size:0.86rem;margin-bottom:0.8rem;">
-              Pilih satu dugaan kondisi jika ingin fokus mengujinya, atau biarkan "Evaluasi Semua Kondisi" agar sistem menguji semua kemungkinan.
+              Pilih satu dugaan kondisi jika ingin fokus mengujinya, atau biarkan "Evaluasi Semua Kondisi" agar sistem menguji seluruh kemungkinan.
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(210px, 1fr));gap:0.65rem;">
               <label class="checkbox-item" style="cursor:pointer;">
                 <input type="radio" name="target_goal_id" value="0" checked style="accent-color:var(--primary);width:18px;height:18px;">
                 <div>
-                  <strong>🌟 Evaluasi Semua Kondisi</strong>
+                  <strong>Evaluasi Semua Kondisi</strong>
                   <div class="muted" style="font-size:0.78rem;">Uji seluruh hipotesis H01 s.d. H07</div>
                 </div>
               </label>
@@ -166,13 +171,13 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
           <!-- LANGKAH 2: PILIH GEJALA -->
           <div style="margin-bottom:1.5rem;">
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.5rem;">
-              <label style="font-size:1rem;font-weight:700;">
-                🔍 2. Centang Gejala yang Sedang Anda Rasakan
+              <label style="font-size:1rem;font-weight:700;display:flex;align-items:center;gap:0.4rem;">
+                <span style="color:var(--primary);"><?= icon('search', '', 18) ?></span> 2. Centang Gejala yang Sedang Anda Rasakan
               </label>
               <span class="muted" style="font-size:0.85rem;" id="selected-counter">0 gejala dipilih</span>
             </div>
             
-            <input type="text" id="filter" placeholder="🔎 Ketik untuk mencari gejala..." class="search-input" autocomplete="off">
+            <input type="text" id="filter" placeholder="Ketik untuk mencari gejala..." class="search-input" autocomplete="off">
             
             <div class="checkbox-grid" id="gejala-list">
               <?php 
@@ -197,9 +202,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 
           <div class="form-actions" style="margin-top:1.5rem;">
             <button type="submit" class="btn btn-primary btn-lg">
-              🚀 Jalankan Analisis Backward Chaining
+              <?= icon('rocket', '', 18) ?> Jalankan Analisis Backward Chaining
             </button>
-            <a href="index.php" class="btn btn-secondary">🏠 Batal</a>
+            <a href="index.php" class="btn btn-secondary"><?= icon('home', '', 18) ?> Batal</a>
           </div>
         </form>
       </div>
@@ -216,8 +221,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
       <!-- KARTU HASIL UTAMA -->
       <?php if (!empty($goalsTerbukti)): ?>
         <div class="result-box success" style="margin-bottom:1.8rem;">
-          <div style="display:flex;align-items:flex-start;gap:0.8rem;">
-            <span style="font-size:2.2rem;line-height:1;">✅</span>
+          <div style="display:flex;align-items:flex-start;gap:0.9rem;">
+            <div style="color:#10b981;"><?= icon('check-circle', '', 36) ?></div>
             <div style="flex:1;">
               <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;margin-bottom:0.4rem;">
                 <span class="badge" style="background:#15803d;color:white;font-weight:700;font-size:0.85rem;padding:0.25rem 0.75rem;">
@@ -241,8 +246,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
               </p>
               
               <div style="background:#f0fdf4;padding:0.9rem 1.1rem;border-radius:10px;border-left:4px solid #10b981;">
-                <strong style="color:#166534;display:block;margin-bottom:0.4rem;font-size:0.92rem;">
-                  🩺 Panduan & Langkah Perawatan:
+                <strong style="color:#166534;display:flex;align-items:center;gap:0.4rem;margin-bottom:0.4rem;font-size:0.92rem;">
+                  <?= icon('stethoscope', '', 18) ?> Panduan & Langkah Perawatan:
                 </strong>
                 <p style="color:#14532d;margin:0;font-size:0.92rem;line-height:1.5;">
                   <?= htmlspecialchars($gt['kondisi']['saran']) ?>
@@ -254,8 +259,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 
       <?php else: ?>
         <div class="result-box warning" style="margin-bottom:1.8rem;">
-          <div style="display:flex;align-items:flex-start;gap:0.8rem;">
-            <span style="font-size:2.2rem;line-height:1;">🔍</span>
+          <div style="display:flex;align-items:flex-start;gap:0.9rem;">
+            <div style="color:#f59e0b;"><?= icon('alert', '', 36) ?></div>
             <div>
               <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;margin-bottom:0.4rem;">
                 <span class="badge" style="background:#b45309;color:white;font-weight:700;font-size:0.85rem;padding:0.25rem 0.75rem;">
@@ -277,7 +282,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         <?php if ($pertanyaanLanjutan): ?>
           <div class="card" style="border: 2px solid #0284c7; background: #f0f9ff; margin-bottom: 1.8rem;">
             <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.5rem;">
-              <span style="font-size:1.4rem;">💡</span>
+              <span style="color:#0284c7;"><?= icon('lightbulb', '', 22) ?></span>
               <h3 style="color:#0369a1;margin:0;font-size:1.15rem;">
                 Verifikasi Gejala Tambahan (Backward Chaining)
               </h3>
@@ -306,10 +311,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
               <input type="hidden" name="gejala[]" value="<?= $pertanyaanLanjutan['gejala']['id'] ?>">
               <input type="hidden" name="target_goal_id" value="<?= $pertanyaanLanjutan['kondisi']['id'] ?>">
               <button type="submit" class="btn btn-primary">
-                ✅ Ya, Saya Mengalami Gejala Ini (Buktikan)
+                <?= icon('check', '', 18) ?> Ya, Saya Mengalami Gejala Ini (Buktikan)
               </button>
               <a href="konsultasi.php" class="btn btn-secondary">
-                ❌ Tidak, Pilih Ulang Gejala
+                <?= icon('close', '', 18) ?> Tidak, Pilih Ulang Gejala
               </a>
             </form>
           </div>
@@ -318,8 +323,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 
       <!-- RINGKASAN GEJALA YANG ANDA PILIH -->
       <div class="card" style="margin-bottom:1.5rem;">
-        <h3 style="font-size:1.05rem;margin-bottom:0.8rem;color:#334155;">
-          📌 Gejala yang Anda Laporkan:
+        <h3 style="font-size:1.05rem;margin-bottom:0.8rem;color:#334155;display:flex;align-items:center;gap:0.4rem;">
+          <span style="color:var(--primary);"><?= icon('pin', '', 18) ?></span> Gejala yang Anda Laporkan:
         </h3>
         <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
           <?php foreach ($hasilDiagnosa['selected_set'] as $sid): 
@@ -327,7 +332,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             if (!$gData) continue;
           ?>
             <span style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.4rem 0.8rem;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:20px;font-size:0.85rem;color:#065f46;font-weight:600;">
-              ✓ <?= htmlspecialchars($gData['kode']) ?>: <?= htmlspecialchars($gData['nama']) ?>
+              <?= icon('check', 'svg-icon-sm', 14) ?> <?= htmlspecialchars($gData['kode']) ?>: <?= htmlspecialchars($gData['nama']) ?>
             </span>
           <?php endforeach; ?>
         </div>
@@ -335,8 +340,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 
       <!-- RINCIAN TEKNIS ATURAN INFERENSI (COLLAPSIBLE / ACCORDION) -->
       <details class="card" style="margin-bottom:1.8rem;background:#f8fafc;border:1px solid #e2e8f0;">
-        <summary style="font-weight:700;font-size:0.95rem;color:#475569;cursor:pointer;padding:0.3rem 0;">
-          ⚙️ Klik di sini untuk melihat Rincian Aturan Logika Inferensi (Technical Trace)
+        <summary style="font-weight:700;font-size:0.95rem;color:#475569;cursor:pointer;padding:0.3rem 0;display:flex;align-items:center;gap:0.5rem;">
+          <?= icon('rule', '', 18) ?> Klik di sini untuk melihat Rincian Aturan Logika Inferensi (Technical Trace)
         </summary>
         
         <div style="margin-top:1.2rem;display:flex;flex-direction:column;gap:1rem;">
@@ -368,9 +373,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 
       <!-- TOMBOL AKSI -->
       <div class="form-actions">
-        <a href="konsultasi.php" class="btn btn-primary">🔄 Konsultasi Baru</a>
-        <a href="riwayat.php" class="btn btn-secondary">📋 Lihat Riwayat</a>
-        <a href="index.php" class="btn btn-secondary">🏠 Beranda</a>
+        <a href="konsultasi.php" class="btn btn-primary"><?= icon('refresh', '', 16) ?> Konsultasi Baru</a>
+        <a href="riwayat.php" class="btn btn-secondary"><?= icon('clipboard', '', 16) ?> Lihat Riwayat</a>
+        <a href="index.php" class="btn btn-secondary"><?= icon('home', '', 16) ?> Beranda</a>
       </div>
     <?php endif; ?>
   </main>

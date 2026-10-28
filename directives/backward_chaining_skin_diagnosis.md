@@ -37,5 +37,8 @@ Mengembangkan sistem pakar pra-diagnosis dan identifikasi kondisi kulit wajah be
 
 ## Prinsip Desain UI/UX
 - **Ringkas & Berorientasi Panduan**: Menghindari paragraf panjang atau teks akademis yang membingungkan.
+- **Ikon Vektor SVG**: Menggunakan ikon SVG stroke presisi tinggi via `includes/icons.php` (`icon('name', $class, $size)`) tanpa emoji sistem demi konsistensi tampilan lintas sistem operasi.
 - **Hasil Aksi Nyata**: Menampilkan kesimpulan pra-diagnosis yang jelas, panduan perawatan yang dapat segera diterapkan, dan opsi verifikasi 1-klik.
 - **Trace Teknis Tersembunyi Rapi**: Formula Modus Ponens dan detail premis disimpan dalam accordion collapsible (`<details>`) agar layar tetap bersih.
+- **Arsitektur Ramping (Zero Waste)**: Tidak menyimpan file legacy (Flask/template usang telah dibersihkan sepenuhnya).
+

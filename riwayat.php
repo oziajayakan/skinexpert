@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . "/config/database.php";
+require_once __DIR__ . "/includes/icons.php";
 
 $pesan = "";
 $error = "";
@@ -86,13 +87,13 @@ while ($row = $query->fetch_assoc()) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Riwayat Konsultasi - SkinExpert 🌿</title>
+  <title>Riwayat Konsultasi — SkinExpert</title>
   <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
 
   <!-- Tombol Menu (pojok kiri atas) -->
-  <button class="settings-btn" id="settingsBtn" aria-label="Buka menu">⚙️</button>
+  <button class="settings-btn" id="settingsBtn" aria-label="Buka menu"><?= icon('settings', '', 20) ?></button>
 
   <!-- Overlay -->
   <div class="overlay" id="overlay" onclick="toggleMenu(false)"></div>
@@ -100,17 +101,20 @@ while ($row = $query->fetch_assoc()) {
   <!-- Sidebar Menu -->
   <aside class="sidebar" id="sidebar">
     <p class="sidebar-title">Menu SkinExpert</p>
-    <a href="index.php"><span class="icon">🏠</span> Beranda</a>
-    <a href="konsultasi.php"><span class="icon">💬</span> Konsultasi Kulit</a>
-    <a href="latihan.php"><span class="icon">🧪</span> Skenario Latihan (UNWAHA)</a>
-    <a href="admin/gejala.php"><span class="icon">🔍</span> Data Fakta Gejala (G)</a>
-    <a href="admin/kondisi.php"><span class="icon">🌿</span> Data Kondisi Kulit (H)</a>
-    <a href="admin/aturan.php"><span class="icon">🧩</span> Basis Aturan (R)</a>
-    <a href="riwayat.php"><span class="icon">📋</span> Riwayat Pemeriksaan</a>
+    <a href="index.php"><span class="icon"><?= icon('home', '', 18) ?></span> Beranda</a>
+    <a href="konsultasi.php"><span class="icon"><?= icon('chat', '', 18) ?></span> Konsultasi Kulit</a>
+    <a href="latihan.php"><span class="icon"><?= icon('flask', '', 18) ?></span> Skenario Latihan (UNWAHA)</a>
+    <a href="admin/gejala.php"><span class="icon"><?= icon('search', '', 18) ?></span> Data Fakta Gejala (G)</a>
+    <a href="admin/kondisi.php"><span class="icon"><?= icon('leaf', '', 18) ?></span> Data Kondisi Kulit (H)</a>
+    <a href="admin/aturan.php"><span class="icon"><?= icon('rule', '', 18) ?></span> Basis Aturan (R)</a>
+    <a href="riwayat.php"><span class="icon"><?= icon('clipboard', '', 18) ?></span> Riwayat Pemeriksaan</a>
   </aside>
 
   <main>
-    <h1>📋 Riwayat Konsultasi</h1>
+    <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem;">
+      <div style="color:var(--primary);"><?= icon('clipboard', '', 28) ?></div>
+      <h1 style="margin:0;">Riwayat Konsultasi</h1>
+    </div>
     <p class="muted" style="margin-bottom:1.2rem">Daftar pemeriksaan kulit wajah yang pernah dilakukan.</p>
 
     <?php if (!empty($pesan)): ?>
@@ -145,7 +149,7 @@ while ($row = $query->fetch_assoc()) {
                     <form method="post" action="riwayat.php" onsubmit="return confirm('Hapus riwayat pemeriksaan ini?')" style="display:inline">
                       <input type="hidden" name="aksi" value="hapus">
                       <input type="hidden" name="id" value="<?= $r["id"] ?>">
-                      <button type="submit" class="btn btn-sm btn-danger">🗑️ Hapus</button>
+                      <button type="submit" class="btn btn-sm btn-danger"><?= icon('trash', '', 14) ?> Hapus</button>
                     </form>
                   </td>
                 </tr>
@@ -161,8 +165,8 @@ while ($row = $query->fetch_assoc()) {
     </div>
 
     <div class="form-actions">
-      <a href="konsultasi.php" class="btn btn-primary">💬 Mulai Konsultasi Baru</a>
-      <a href="index.php" class="btn btn-secondary">🏠 Beranda</a>
+      <a href="konsultasi.php" class="btn btn-primary"><?= icon('chat', '', 18) ?> Mulai Konsultasi Baru</a>
+      <a href="index.php" class="btn btn-secondary"><?= icon('home', '', 18) ?> Beranda</a>
     </div>
   </main>
 

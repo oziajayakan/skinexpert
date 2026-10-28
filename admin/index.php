@@ -22,32 +22,35 @@ $judulHalaman = "Dashboard";
 require __DIR__ . "/header.php";
 ?>
 
-<h1>🌿 Dashboard Knowledge Base Admin</h1>
-<p>Pengelolaan basis pengetahuan sistem pakar SkinExpert berbasis inferensi <strong>Backward Chaining</strong>.</p>
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+    <div style="color:var(--primary);"><?= icon('leaf', '', 28) ?></div>
+    <h1 style="margin:0;">Dashboard Knowledge Base Admin</h1>
+</div>
+<p style="color:var(--text-muted);margin-bottom:24px;">Pengelolaan basis pengetahuan sistem pakar SkinExpert berbasis inferensi <strong>Backward Chaining</strong>.</p>
 
 <div class="grid">
     <section class="card">
-        <p><strong>Fakta Gejala (F)</strong></p>
+        <p style="display:flex;align-items:center;gap:6px;font-weight:600;"><?= icon('search', '', 16) ?> Fakta Gejala (F/G)</p>
         <div class="angka"><?= $totalGejala ?></div>
-        <a class="btn" href="gejala.php">Kelola Fakta (F)</a>
+        <a class="btn" href="gejala.php"><?= icon('edit', '', 14) ?> Kelola Fakta (F)</a>
     </section>
 
     <section class="card">
-        <p><strong>Masalah / Goal (M)</strong></p>
+        <p style="display:flex;align-items:center;gap:6px;font-weight:600;"><?= icon('target', '', 16) ?> Masalah / Goal (M/H)</p>
         <div class="angka"><?= $totalKondisi ?></div>
-        <a class="btn" href="kondisi.php">Kelola Masalah (M)</a>
+        <a class="btn" href="kondisi.php"><?= icon('edit', '', 14) ?> Kelola Masalah (M)</a>
     </section>
 
     <section class="card">
-        <p><strong>Basis Aturan (R)</strong></p>
+        <p style="display:flex;align-items:center;gap:6px;font-weight:600;"><?= icon('rule', '', 16) ?> Basis Aturan (R)</p>
         <div class="angka"><?= $totalAturan ?></div>
-        <a class="btn" href="aturan.php">Kelola Aturan (R)</a>
+        <a class="btn" href="aturan.php"><?= icon('edit', '', 14) ?> Kelola Aturan (R)</a>
     </section>
 
     <section class="card">
-        <p><strong>Riwayat Konsultasi</strong></p>
+        <p style="display:flex;align-items:center;gap:6px;font-weight:600;"><?= icon('clipboard', '', 16) ?> Riwayat Konsultasi</p>
         <div class="angka"><?= $totalPemeriksaan ?></div>
-        <a class="btn" href="../riwayat.php">Lihat Riwayat</a>
+        <a class="btn" href="../riwayat.php"><?= icon('search', '', 14) ?> Lihat Riwayat</a>
     </section>
 </div>
 

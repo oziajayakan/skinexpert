@@ -270,11 +270,12 @@ $judulHalaman = "Data Aturan";
 require __DIR__ . "/header.php";
 ?>
 
-<h1>Data Aturan Forward Chaining</h1>
-<p>
-    Setiap aturan memiliki satu kondisi hasil dan satu atau lebih
-    gejala prasyarat. Semua gejala prasyarat harus dipilih oleh pengguna
-    agar aturan terpenuhi.
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+    <div style="color:var(--primary);"><?= icon('rule', '', 28) ?></div>
+    <h1 style="margin:0;">Data Basis Aturan (R)</h1>
+</div>
+<p style="color:var(--text-muted);margin-bottom:24px;">
+    Basis aturan inferensi Backward Chaining: membuktikan apakah target hipotesis (Goal $Q$) terbukti melalui pemenuhan premis prasyarat $(P_1 \land P_2 \dots) \rightarrow Q$.
 </p>
 
 <?php if ($pesan !== ""): ?>
@@ -291,7 +292,9 @@ require __DIR__ . "/header.php";
 <?php else: ?>
 
 <section class="card">
-    <h3><?= $editData ? "Edit Aturan" : "Tambah Aturan" ?></h3>
+    <h3 style="display:flex;align-items:center;gap:8px;margin-top:0;">
+        <?= $editData ? icon('edit', '', 18) . " Edit Aturan" : icon('plus', '', 18) . " Tambah Aturan" ?>
+    </h3>
 
     <form method="post">
         <input type="hidden" name="csrf_token"
@@ -310,7 +313,7 @@ require __DIR__ . "/header.php";
                placeholder="Contoh: Identifikasi indikasi kulit kering"
                value="<?= htmlspecialchars($editData["nama"] ?? "") ?>">
 
-        <label for="kondisi">Kondisi Hasil</label>
+        <label for="kondisi">Kondisi Hasil (Goal / Hipotesis)</label>
         <select id="kondisi" name="kondisi_kulit_id" required>
             <option value="">-- Pilih kondisi hasil --</option>
             <?php foreach ($daftarKondisi as $k): ?>
@@ -321,34 +324,35 @@ require __DIR__ . "/header.php";
             <?php endforeach; ?>
         </select>
 
-        <label>Gejala Prasyarat</label>
-        <p>Pilih semua gejala yang wajib terpenuhi untuk aturan ini.</p>
+        <label>Gejala Prasyarat (Premis P)</label>
+        <p style="color:#64748b;font-size:0.9rem;margin:0 0 10px;">Pilih semua gejala yang wajib terpenuhi untuk aturan ini:</p>
 
         <div class="grid">
             <?php foreach ($daftarGejala as $g): ?>
-                <label style="display:flex;gap:8px;align-items:flex-start;background:#f7faf8;padding:12px;border-radius:7px">
+                <label style="display:flex;gap:8px;align-items:flex-start;background:#f8fafc;padding:12px;border-radius:8px;border:1px solid #e2e8f0;cursor:pointer;">
                     <input type="checkbox" name="gejala[]"
                            value="<?= (int) $g["id"] ?>"
                            <?= in_array((int) $g["id"], $gejalaTerpilih, true) ? "checked" : "" ?>>
                     <span>
                         <strong><?= htmlspecialchars($g["kode"]) ?></strong><br>
-                        <?= htmlspecialchars($g["nama"]) ?>
+                        <span style="font-size:0.9rem;color:#334155;"><?= htmlspecialchars($g["nama"]) ?></span>
                     </span>
                 </label>
             <?php endforeach; ?>
         </div>
 
-        <label style="display:flex;gap:8px;align-items:center">
+        <br>
+        <label style="display:flex;gap:8px;align-items:center;cursor:pointer;">
             <input type="checkbox" name="aktif" value="1"
                 <?= !$editData || (int) $editData["aktif"] === 1 ? "checked" : "" ?>>
-            Aturan aktif
+            <span><strong>Aturan aktif</strong></span>
         </label>
 
         <br>
-        <button type="submit">Simpan Aturan</button>
+        <button type="submit"><?= icon('check', '', 16) ?> Simpan Aturan</button>
 
         <?php if ($editData): ?>
-            <a class="btn btn-secondary" href="aturan.php">Batal Edit</a>
+            <a class="btn btn-secondary" href="aturan.php"><?= icon('close', '', 14) ?> Batal Edit</a>
         <?php endif; ?>
     </form>
 </section>
@@ -356,7 +360,7 @@ require __DIR__ . "/header.php";
 <?php endif; ?>
 
 <section class="card">
-    <h3>Daftar Aturan</h3>
+    <h3 style="margin-top:0;">Daftar Aturan</h3>
     <div class="table-wrap">
         <table>
             <thead>
@@ -391,9 +395,9 @@ require __DIR__ . "/header.php";
                     $stmtG->close();
                     ?>
                     <tr>
-                        <td><?= htmlspecialchars($r["kode"]) ?></td>
+                        <td><strong><?= htmlspecialchars($r["kode"]) ?></strong></td>
                         <td><?= htmlspecialchars($r["nama"]) ?></td>
-                        <td>
+                        <td style="font-size:0.9rem;">
                             <?php if ($namaGejala): ?>
                                 <?= htmlspecialchars(implode(", ", $namaGejala)) ?>
                             <?php else: ?>
@@ -401,12 +405,18 @@ require __DIR__ . "/header.php";
                             <?php endif; ?>
                         </td>
                         <td>
-                            <?= htmlspecialchars($r["kode_kondisi"] . " — " . $r["nama_kondisi"]) ?>
+                            <strong><?= htmlspecialchars($r["kode_kondisi"] . " — " . $r["nama_kondisi"]) ?></strong>
                         </td>
-                        <td><?= (int) $r["aktif"] === 1 ? "Aktif" : "Nonaktif" ?></td>
+                        <td>
+                            <span style="font-weight:600;color:<?= (int) $r["aktif"] === 1 ? '#059669' : '#dc2626' ?>;">
+                                <?= (int) $r["aktif"] === 1 ? "Aktif" : "Nonaktif" ?>
+                            </span>
+                        </td>
                         <td>
                             <a class="btn btn-warning"
-                               href="aturan.php?edit=<?= (int) $r["id"] ?>">Edit</a>
+                               href="aturan.php?edit=<?= (int) $r["id"] ?>">
+                                <?= icon('edit', '', 14) ?> Edit
+                            </a>
 
                             <form method="post" style="display:inline-block">
                                 <input type="hidden" name="csrf_token"
@@ -415,7 +425,7 @@ require __DIR__ . "/header.php";
                                 <input type="hidden" name="id"
                                        value="<?= (int) $r["id"] ?>">
                                 <button type="submit" class="btn-secondary">
-                                    <?= (int) $r["aktif"] === 1 ? "Nonaktifkan" : "Aktifkan" ?>
+                                    <?= icon('refresh', '', 14) ?> <?= (int) $r["aktif"] === 1 ? "Nonaktifkan" : "Aktifkan" ?>
                                 </button>
                             </form>
 
@@ -426,7 +436,9 @@ require __DIR__ . "/header.php";
                                 <input type="hidden" name="aksi" value="hapus">
                                 <input type="hidden" name="id"
                                        value="<?= (int) $r["id"] ?>">
-                                <button type="submit" class="btn-danger">Hapus</button>
+                                <button type="submit" class="btn-danger">
+                                    <?= icon('trash', '', 14) ?> Hapus
+                                </button>
                             </form>
                         </td>
                     </tr>

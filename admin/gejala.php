@@ -106,8 +106,11 @@ $judulHalaman = "Data Gejala";
 require __DIR__ . "/header.php";
 ?>
 
-<h1>Data Gejala</h1>
-<p>Kelola gejala yang dapat dipilih pengguna saat melakukan pemeriksaan.</p>
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+    <div style="color:var(--primary);"><?= icon('search', '', 28) ?></div>
+    <h1 style="margin:0;">Data Fakta Gejala (G)</h1>
+</div>
+<p style="color:var(--text-muted);margin-bottom:24px;">Kelola gejala klinis yang dapat dipilih pengguna saat melakukan pemeriksaan.</p>
 
 <?php if ($pesan !== ""): ?>
     <div class="<?= htmlspecialchars($jenisPesan) ?>">
@@ -116,7 +119,9 @@ require __DIR__ . "/header.php";
 <?php endif; ?>
 
 <section class="card">
-    <h3><?= $editData ? "Edit Gejala" : "Tambah Gejala" ?></h3>
+    <h3 style="display:flex;align-items:center;gap:8px;margin-top:0;">
+        <?= $editData ? icon('edit', '', 18) . " Edit Gejala" : icon('plus', '', 18) . " Tambah Gejala" ?>
+    </h3>
 
     <form method="post">
         <input type="hidden" name="aksi" value="simpan">
@@ -139,16 +144,16 @@ require __DIR__ . "/header.php";
                   placeholder="Penjelasan singkat gejala"><?= htmlspecialchars($editData["deskripsi"] ?? "") ?></textarea>
 
         <br><br>
-        <button type="submit">Simpan Gejala</button>
+        <button type="submit"><?= icon('check', '', 16) ?> Simpan Gejala</button>
 
         <?php if ($editData): ?>
-            <a class="btn btn-secondary" href="gejala.php">Batal Edit</a>
+            <a class="btn btn-secondary" href="gejala.php"><?= icon('close', '', 14) ?> Batal Edit</a>
         <?php endif; ?>
     </form>
 </section>
 
 <section class="card">
-    <h3>Daftar Gejala</h3>
+    <h3 style="margin-top:0;">Daftar Gejala</h3>
     <div class="table-wrap">
         <table>
             <thead>
@@ -166,13 +171,13 @@ require __DIR__ . "/header.php";
                 <?php while ($row = $result->fetch_assoc()): ?>
                     <tr>
                         <td><?= $no++ ?></td>
-                        <td><?= htmlspecialchars($row["kode"]) ?></td>
+                        <td><strong><?= htmlspecialchars($row["kode"]) ?></strong></td>
                         <td><?= htmlspecialchars($row["nama"]) ?></td>
-                        <td><?= htmlspecialchars($row["deskripsi"] ?? "") ?></td>
+                        <td style="color:#64748b;"><?= htmlspecialchars($row["deskripsi"] ?? "") ?></td>
                         <td>
                             <a class="btn btn-warning"
                                href="gejala.php?edit=<?= (int) $row["id"] ?>">
-                                Edit
+                                <?= icon('edit', '', 14) ?> Edit
                             </a>
 
                             <form method="post"
@@ -182,7 +187,7 @@ require __DIR__ . "/header.php";
                                 <input type="hidden" name="id"
                                        value="<?= (int) $row["id"] ?>">
                                 <button class="btn-danger" type="submit">
-                                    Hapus
+                                    <?= icon('trash', '', 14) ?> Hapus
                                 </button>
                             </form>
                         </td>

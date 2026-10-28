@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/proses/backward_chaining.php';
+require_once __DIR__ . '/includes/icons.php';
 
 // Fakta default dari slide: F1 = Hari Senin, F2 = Yani Kuliah
 $faktaTerpilih = $_POST['fakta'] ?? ['F1', 'F2'];
@@ -23,13 +24,13 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' || isset($_GET['auto'])) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simulasi Backward Chaining - Skenario UNWAHA 🎓</title>
+  <title>Simulasi Backward Chaining — Skenario UNWAHA</title>
   <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
 
   <!-- Tombol Menu (pojok kiri atas) -->
-  <button class="settings-btn" id="settingsBtn" aria-label="Buka menu">⚙️</button>
+  <button class="settings-btn" id="settingsBtn" aria-label="Buka menu"><?= icon('settings', '', 20) ?></button>
 
   <!-- Overlay -->
   <div class="overlay" id="overlay" onclick="toggleMenu(false)"></div>
@@ -37,19 +38,22 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' || isset($_GET['auto'])) {
   <!-- Sidebar Menu -->
   <aside class="sidebar" id="sidebar">
     <p class="sidebar-title">Menu SkinExpert</p>
-    <a href="index.php"><span class="icon">🏠</span> Beranda</a>
-    <a href="konsultasi.php"><span class="icon">💬</span> Konsultasi Kulit</a>
-    <a href="latihan.php"><span class="icon">🧪</span> Skenario Latihan (UNWAHA)</a>
-    <a href="admin/gejala.php"><span class="icon">🔍</span> Data Fakta Gejala (G)</a>
-    <a href="admin/kondisi.php"><span class="icon">🌿</span> Data Kondisi Kulit (H)</a>
-    <a href="admin/aturan.php"><span class="icon">🧩</span> Basis Aturan (R)</a>
-    <a href="riwayat.php"><span class="icon">📋</span> Riwayat Pemeriksaan</a>
+    <a href="index.php"><span class="icon"><?= icon('home', '', 18) ?></span> Beranda</a>
+    <a href="konsultasi.php"><span class="icon"><?= icon('chat', '', 18) ?></span> Konsultasi Kulit</a>
+    <a href="latihan.php"><span class="icon"><?= icon('flask', '', 18) ?></span> Skenario Latihan (UNWAHA)</a>
+    <a href="admin/gejala.php"><span class="icon"><?= icon('search', '', 18) ?></span> Data Fakta Gejala (G)</a>
+    <a href="admin/kondisi.php"><span class="icon"><?= icon('leaf', '', 18) ?></span> Data Kondisi Kulit (H)</a>
+    <a href="admin/aturan.php"><span class="icon"><?= icon('rule', '', 18) ?></span> Basis Aturan (R)</a>
+    <a href="riwayat.php"><span class="icon"><?= icon('clipboard', '', 18) ?></span> Riwayat Pemeriksaan</a>
   </aside>
 
   <main>
     <div style="margin-bottom:1.5rem;">
-      <a href="index.php" class="btn btn-secondary btn-sm" style="margin-bottom:0.8rem;">← Kembali ke Beranda</a>
-      <h1>🎓 Skenario Latihan Backward Chaining (Materi UNWAHA)</h1>
+      <a href="index.php" class="btn btn-secondary btn-sm" style="margin-bottom:0.8rem;"><?= icon('arrow-left', '', 14) ?> Kembali ke Beranda</a>
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem;">
+        <div style="color:var(--primary);"><?= icon('academic', '', 28) ?></div>
+        <h1 style="margin:0;">Skenario Latihan Backward Chaining (Materi UNWAHA)</h1>
+      </div>
       <p class="muted">
         Halaman ini mereplikasi secara visual dan komputasional studi kasus latihan logika dari slide kuliah 
         <strong>Universitas KH. A. Wahab Hasbullah (UNWAHA)</strong>, membuktikan bagaimana penelusuran mundur 
@@ -61,7 +65,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' || isset($_GET['auto'])) {
     <div class="slide-monitor">
       <div class="slide-screen-header">
         <div class="slide-screen-title">
-          <span>📺 Skenario Latihan (Fakta (F) & Masalah (M))</span>
+          <span><?= icon('monitor', '', 18) ?> Skenario Latihan (Fakta F & Masalah M)</span>
         </div>
         <div class="slide-rainbow-bar"></div>
       </div>
@@ -113,7 +117,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' || isset($_GET['auto'])) {
     <div class="slide-monitor">
       <div class="slide-screen-header">
         <div class="slide-screen-title">
-          <span>🧩 Skenario Latihan (Aturan (Rule))</span>
+          <span><?= icon('rule', '', 18) ?> Skenario Latihan (Basis Aturan R)</span>
         </div>
         <div class="slide-rainbow-bar"></div>
       </div>
@@ -171,7 +175,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' || isset($_GET['auto'])) {
 
     <!-- FORM INTERAKTIF PENGUJIAN -->
     <div class="card">
-      <h2>🎮 Panel Uji Interaktif Backward Chaining</h2>
+      <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.4rem;">
+        <div style="color:var(--primary);"><?= icon('flask', '', 22) ?></div>
+        <h2 style="margin:0;">Panel Uji Interaktif Backward Chaining</h2>
+      </div>
       <p class="muted" style="margin-bottom:1.2rem;">
         Anda dapat mengubah fakta yang aktif dan memilih target masalah yang ingin dibuktikan secara dinamis.
       </p>
@@ -181,7 +188,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' || isset($_GET['auto'])) {
           
           <!-- PILIH TARGET MASALAH -->
           <div>
-            <label style="font-weight:700;display:block;margin-bottom:0.6rem;">🎯 Pilih Target Masalah (Goal):</label>
+            <label style="font-weight:700;display:flex;align-items:center;gap:0.4rem;margin-bottom:0.6rem;">
+              <?= icon('target', '', 16) ?> Pilih Target Masalah (Goal):
+            </label>
             <div style="display:flex;flex-direction:column;gap:0.6rem;">
               <label class="checkbox-item" style="cursor:pointer;">
                 <input type="radio" name="target_masalah" value="M1" <?= $targetMasalah === 'M1' ? 'checked' : '' ?> style="accent-color:var(--primary);width:18px;height:18px;">
@@ -203,7 +212,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' || isset($_GET['auto'])) {
 
           <!-- PILIH FAKTA AKTIF -->
           <div>
-            <label style="font-weight:700;display:block;margin-bottom:0.6rem;">📌 Atur Fakta Aktif (Working Memory):</label>
+            <label style="font-weight:700;display:flex;align-items:center;gap:0.4rem;margin-bottom:0.6rem;">
+              <?= icon('pin', '', 16) ?> Atur Fakta Aktif (Working Memory):
+            </label>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;">
               <label class="checkbox-item" style="cursor:pointer;">
                 <input type="checkbox" name="fakta[]" value="F1" <?= in_array('F1', $faktaTerpilih) ? 'checked' : '' ?>>
@@ -226,7 +237,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' || isset($_GET['auto'])) {
         </div>
 
         <button type="submit" class="btn btn-primary btn-lg">
-          ⚡ Jalankan Pembuktian Logika
+          <?= icon('zap', '', 18) ?> Jalankan Pembuktian Logika
         </button>
       </form>
     </div>
@@ -235,11 +246,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' || isset($_GET['auto'])) {
     <?php if ($hasilSimulasi): ?>
       <div class="card" style="border:2px solid <?= $hasilSimulasi['is_proven'] ? '#22c55e' : '#f87171' ?>;">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.8rem;margin-bottom:1rem;">
-          <h2>
-            📊 Hasil Inferensi: <?= $hasilSimulasi['target'] === 'M1' ? 'M1 (Ali Masuk Kuliah)' : 'M2 (Ani Bolos Kuliah)' ?>
-          </h2>
-          <span class="proof-status-tag <?= $hasilSimulasi['is_proven'] ? 'tag-proven' : 'tag-gugur' ?>" style="font-size:1rem;padding:0.4rem 1.2rem;">
-            <?= $hasilSimulasi['is_proven'] ? '🟢 HIPOTESIS TERBUKTI BENAR' : '🔴 HIPOTESIS TIDAK TERBUKTI' ?>
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <?= icon('search', '', 22) ?>
+            <h2 style="margin:0;">
+              Hasil Inferensi: <?= $hasilSimulasi['target'] === 'M1' ? 'M1 (Ali Masuk Kuliah)' : 'M2 (Ani Bolos Kuliah)' ?>
+            </h2>
+          </div>
+          <span class="proof-status-tag <?= $hasilSimulasi['is_proven'] ? 'tag-proven' : 'tag-gugur' ?>" style="font-size:1rem;padding:0.4rem 1.2rem;display:inline-flex;align-items:center;gap:0.4rem;">
+            <?= $hasilSimulasi['is_proven'] ? icon('check-circle', '', 18) . ' HIPOTESIS TERBUKTI BENAR' : icon('alert', '', 18) . ' HIPOTESIS TIDAK TERBUKTI' ?>
           </span>
         </div>
 
@@ -269,7 +283,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' || isset($_GET['auto'])) {
         </div>
 
         <div style="margin-top:1.5rem;padding:1.2rem;border-radius:12px;background:<?= $hasilSimulasi['is_proven'] ? '#ecfdf5' : '#fff1f2' ?>;color:<?= $hasilSimulasi['is_proven'] ? '#065f46' : '#9f1239' ?>;">
-          <strong>🎯 Kesimpulan Logika:</strong><br>
+          <div style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.4rem;">
+            <?= icon('target', '', 18) ?>
+            <strong>Kesimpulan Logika:</strong>
+          </div>
           <?= $hasilSimulasi['is_proven'] 
               ? "Berdasarkan penelusuran berantai dari fakta [F2: Yani Kuliah] membuktikan bahwa perkuliahan tidak libur dan Ali belajar di kampus UNWAHA, sehingga Masalah {$hasilSimulasi['target']} TERBUKTI BENAR." 
               : "Basis fakta yang aktif tidak mencukupi untuk memenuhi premis aturan yang diperlukan, sehingga Masalah {$hasilSimulasi['target']} TIDAK DAPAT DIBUKTIKAN." ?>

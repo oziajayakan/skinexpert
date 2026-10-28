@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../includes/icons.php";
+
 if (!isset($judulHalaman)) {
     $judulHalaman = "Admin SkinExpert";
 }
@@ -188,6 +190,11 @@ if (!isset($judulHalaman)) {
             color: #991b1b;
             border: 1px solid #fecaca;
         }
+        .svg-icon {
+            display: inline-block;
+            vertical-align: middle;
+            flex-shrink: 0;
+        }
         .footer {
             text-align: center;
             padding: 30px;
@@ -202,15 +209,19 @@ if (!isset($judulHalaman)) {
 </head>
 <body>
 <header class="navbar">
-    <h2>🌿 SkinExpert — Knowledge Base Admin</h2>
+    <h2>
+        <?= icon('leaf', '', 22) ?>
+        <span>SkinExpert</span>
+        <span style="font-size:0.8rem;font-weight:500;color:#94a3b8;padding-left:4px;">Knowledge Base Admin</span>
+    </h2>
     <nav>
-        <a href="index.php">Dashboard</a>
-        <a href="gejala.php">Fakta Gejala (G)</a>
-        <a href="kondisi.php">Kondisi Kulit (H)</a>
-        <a href="aturan.php">Basis Aturan (R)</a>
-        <a href="../riwayat.php">Riwayat</a>
-        <a href="../latihan.php">Skenario Latihan</a>
-        <a href="../index.php">Website Utama</a>
+        <a href="index.php" style="display:inline-flex;align-items:center;gap:6px;"><?= icon('home', '', 15) ?> Dashboard</a>
+        <a href="gejala.php" style="display:inline-flex;align-items:center;gap:6px;"><?= icon('search', '', 15) ?> Fakta Gejala (G)</a>
+        <a href="kondisi.php" style="display:inline-flex;align-items:center;gap:6px;"><?= icon('target', '', 15) ?> Kondisi Kulit (H)</a>
+        <a href="aturan.php" style="display:inline-flex;align-items:center;gap:6px;"><?= icon('rule', '', 15) ?> Basis Aturan (R)</a>
+        <a href="../riwayat.php" style="display:inline-flex;align-items:center;gap:6px;"><?= icon('clipboard', '', 15) ?> Riwayat</a>
+        <a href="../latihan.php" style="display:inline-flex;align-items:center;gap:6px;"><?= icon('flask', '', 15) ?> Skenario Latihan</a>
+        <a href="../index.php" style="display:inline-flex;align-items:center;gap:6px;"><?= icon('leaf', '', 15) ?> Web Utama</a>
     </nav>
 </header>
 <main class="container">

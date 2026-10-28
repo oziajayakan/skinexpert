@@ -141,8 +141,11 @@ $judulHalaman = "Data Kondisi Kulit";
 require __DIR__ . "/header.php";
 ?>
 
-<h1>Data Kondisi Kulit</h1>
-<p>Kelola kesimpulan dan saran yang dapat ditampilkan setelah pemeriksaan.</p>
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+    <div style="color:var(--primary);"><?= icon('target', '', 28) ?></div>
+    <h1 style="margin:0;">Data Kondisi Kulit (H)</h1>
+</div>
+<p style="color:var(--text-muted);margin-bottom:24px;">Kelola kesimpulan hipotesis dan rekomendasi saran klinis sistem pakar.</p>
 
 <?php if ($pesan !== ""): ?>
     <div class="<?= htmlspecialchars($jenisPesan) ?>">
@@ -151,7 +154,9 @@ require __DIR__ . "/header.php";
 <?php endif; ?>
 
 <section class="card">
-    <h3><?= $editData ? "Edit Kondisi" : "Tambah Kondisi" ?></h3>
+    <h3 style="display:flex;align-items:center;gap:8px;margin-top:0;">
+        <?= $editData ? icon('edit', '', 18) . " Edit Kondisi" : icon('plus', '', 18) . " Tambah Kondisi" ?>
+    </h3>
 
     <form method="post">
         <input type="hidden" name="csrf_token"
@@ -177,15 +182,15 @@ require __DIR__ . "/header.php";
         <textarea id="saran" name="saran"><?= htmlspecialchars($editData["saran"] ?? "") ?></textarea>
 
         <br><br>
-        <button type="submit">Simpan Kondisi</button>
+        <button type="submit"><?= icon('check', '', 16) ?> Simpan Kondisi</button>
         <?php if ($editData): ?>
-            <a class="btn btn-secondary" href="kondisi.php">Batal Edit</a>
+            <a class="btn btn-secondary" href="kondisi.php"><?= icon('close', '', 14) ?> Batal Edit</a>
         <?php endif; ?>
     </form>
 </section>
 
 <section class="card">
-    <h3>Daftar Kondisi Kulit</h3>
+    <h3 style="margin-top:0;">Daftar Kondisi Kulit</h3>
     <div class="table-wrap">
         <table>
             <thead>
@@ -204,13 +209,15 @@ require __DIR__ . "/header.php";
                 <?php while ($row = $result->fetch_assoc()): ?>
                     <tr>
                         <td><?= $no++ ?></td>
-                        <td><?= htmlspecialchars($row["kode"]) ?></td>
+                        <td><strong><?= htmlspecialchars($row["kode"]) ?></strong></td>
                         <td><?= htmlspecialchars($row["nama"]) ?></td>
-                        <td><?= htmlspecialchars($row["deskripsi"] ?? "") ?></td>
-                        <td><?= htmlspecialchars($row["saran"] ?? "") ?></td>
+                        <td style="color:#64748b;font-size:0.9rem;"><?= htmlspecialchars($row["deskripsi"] ?? "") ?></td>
+                        <td style="color:#64748b;font-size:0.9rem;"><?= htmlspecialchars($row["saran"] ?? "") ?></td>
                         <td>
                             <a class="btn btn-warning"
-                               href="kondisi.php?edit=<?= (int) $row["id"] ?>">Edit</a>
+                               href="kondisi.php?edit=<?= (int) $row["id"] ?>">
+                                <?= icon('edit', '', 14) ?> Edit
+                            </a>
 
                             <form method="post"
                                   style="display:inline-block"
@@ -220,7 +227,9 @@ require __DIR__ . "/header.php";
                                 <input type="hidden" name="aksi" value="hapus">
                                 <input type="hidden" name="id"
                                        value="<?= (int) $row["id"] ?>">
-                                <button type="submit" class="btn-danger">Hapus</button>
+                                <button type="submit" class="btn-danger">
+                                    <?= icon('trash', '', 14) ?> Hapus
+                                </button>
                             </form>
                         </td>
                     </tr>

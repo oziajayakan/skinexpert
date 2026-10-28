@@ -1,109 +1,114 @@
-# SkinExpert 🌿
+# SkinExpert — Sistem Pakar Diagnosis Kulit Wajah
 
-**SkinExpert** adalah aplikasi sistem pakar diagnosis kondisi kulit wajah berbasis web interaktif menggunakan metode penalaran **Backward Chaining (Goal-Driven Reasoning)**.
+**SkinExpert** adalah aplikasi sistem pakar diagnosis klinis kondisi kulit wajah berbasis web modern menggunakan mesin inferensi **Backward Chaining (Goal-Driven Reasoning)** dengan representasi logika Horn Clause.
 
-Sistem ini membantu pengguna mengidentifikasi kondisi kulit (misal: Jerawat Vulgaris, Dermatitis Kontak, Kulit Kering Sensitif, dll.) berdasarkan gejala klinis yang dirasakan, serta menyertakan saran perawatan, modul administrasi basis pengetahuan, dan pencatatan riwayat konsultasi.
-
----
-
-## ✨ Fitur Utama
-
-1. **Konsultasi Interaktif & Visual Monitor (Backward Chaining)**:
-   - Pemilihan **Fakta Klinis (F)** dan penentuan target **Masalah / Goal (M)** yang ingin diuji.
-   - Evaluasi inferensi **Goal-Driven Reasoning** untuk memverifikasi prasyarat aturan $(P_1 \land P_2 \dots) \rightarrow Q$.
-   - Tampilan visual diagram aturan bergaya **Slide Monitor** (badge chevron Fakta, Masalah, dan Aturan horizontal).
-   - Visualisasi transparan jejak penalaran (*reasoning trace*) lengkap dengan status `TERBUKTI` vs `GUGUR (BACKTRACK)`.
-2. **Skenario Latihan Interaktif (`/latihan.php`)**:
-   - Replikasi visual dan komputasional studi kasus latihan kuliah **Universitas KH. A. Wahab Hasbullah (UNWAHA)**:
-     - Fakta: `F1 (Hari Senin)`, `F2 (Yani Kuliah)`.
-     - Masalah: `M1 (Apakah Ali Masuk Kuliah?)`, `M2 (Apakah Ani Bolos Kuliah?)`.
-     - Aturan: `R6` s.d. `R10`.
-   - Menampilkan penelusuran berantai dan derivasi Modus Ponens secara interaktif dan real-time.
-3. **Panel Admin Lengkap (`/admin/`)**:
-   - **Dashboard Ringkasan**: Statistik data Fakta (F), Masalah (M), dan Aturan (R).
-   - **Kelola Fakta (Gejala)**: Tambah, ubah, dan hapus data fakta klinis.
-   - **Kelola Masalah (Kondisi Kulit)**: Manajemen jenis diagnosis dan rekomendasi saran penanganan.
-   - **Basis Aturan (Rules Engine)**: Pemetaan aturan relasi antara kondisi kulit dan fakta prasyarat dengan proteksi CSRF.
-4. **Riwayat Pemeriksaan (`/riwayat.php`)**:
-   - Pencatatan otomatis hasil diagnosis, waktu pemeriksaan, dan gejala yang dipilih pengguna.
-   - Fitur penghapusan riwayat pemeriksaan secara terisolasi.
-5. **Hybrid Database Layer**:
-   - Mendukung **MySQL / MariaDB** (untuk server produksi atau cloud).
-   - Fallback otomatis ke **SQLite (`skinexpert.sqlite`)** terisi data awal lengkap, sehingga siap berjalan tanpa konfigurasi server database tambahan.
+Sistem ini membantu pengguna memvalidasi hipotesis kondisi kulit wajah (Kulit Kering Dehidrasi, Kulit Berminyak Rentan Komedo, Acne Vulgaris Radang, Kulit Sensitif Alergi, Penuaan Dini / Aging, dll.) berdasarkan gejala klinis yang dirasakan. Dilengkapi dengan panduan interaktif, pertanyaan verifikasi lanjutan, modul manajemen basis pengetahuan (Admin), dan pencatatan riwayat konsultasi.
 
 ---
 
-## 🚀 Panduan Deployment ke Vercel
+## Fitur Utama
 
-Aplikasi ini telah dikonfigurasi untuk langsung di-deploy ke Vercel menggunakan runtime `vercel-php`.
+1. **Mesin Inferensi Backward Chaining (Horn Clauses)**:
+   - Evaluasi berbasis kaidah Horn Clause $(P_1 \land P_2 \land \dots \land P_n) \rightarrow Q$.
+   - **Interactive Follow-Up Verification**: Jika pengguna memilih gejala parsial, sistem secara otomatis mengajukan pertanyaan verifikasi lanjutan yang relevan untuk membuktikan hipotesis dengan 1 klik.
+   - **Reasoning Trace Transparan**: Jejak eksekusi inferensi lengkap (premis terpenuhi vs belum terpenuhi) dapat diperiksa melalui panel trace log teknis.
+2. **Desain UI Modern & Vector SVG Icons**:
+   - Tampilan bersih, minimalis, dan berfokus pada panduan praktis (tanpa dinding teks teori yang membebani pengguna).
+   - Seluruh ikon menggunakan grafis vektor SVG tajam (`includes/icons.php`) menggantikan emoji sistem agar konsisten di semua sistem operasi dan perangkat mobile.
+3. **Skenario Latihan Interaktif (`/latihan.php`)**:
+   - Demonstrasi visual dan komputasional studi kasus penalaran Backward Chaining berbasis materi akademik UNWAHA (Fakta $F_1, F_2$ $\rightarrow$ Masalah $M_1, M_2$ melalui Aturan $R_6-R_{10}$).
+4. **Knowledge Base Admin (`/admin/`)**:
+   - **Fakta Gejala (G)**: Manajemen 15 gejala klinis wajah ($G_{01}-G_{15}$).
+   - **Kondisi Kulit (H)**: Manajemen 7 target hipotesis kondisi kulit ($H_{01}-H_{07}$) beserta rekomendasi perawatan.
+   - **Basis Aturan (R)**: Konfigurasi 14 aturan implikasi ($R_{01}-R_{14}$) lengkap dengan proteksi keamanan CSRF.
+5. **Riwayat Pemeriksaan (`/riwayat.php`)**:
+   - Pencatatan otomatis waktu konsultasi, gejala yang dipilih, dan status kesimpulan diagnosis.
+   - Fitur penghapusan riwayat pemeriksaan per data.
+6. **Dual Database Engine (SQLite & MySQL)**:
+   - Terpasang database SQLite mandiri (`skinexpert.sqlite`) siap pakai tanpa konfigurasi tambahan.
+   - Mendukung integrasi mulus ke database cloud MySQL/MariaDB.
 
-### Langkah Deployment Cepat via Vercel Dashboard:
+---
+
+## Pengetahuan Klinis (Knowledge Base)
+
+Sistem telah diisi dengan basis pengetahuan klinis yang realistis dan tervalidasi:
+
+| Kode Hipotesis | Kondisi Kulit Wajah | Prasyarat Gejala Utama (Horn Premise) |
+|---|---|---|
+| **H01** | Kulit Kering & Dehidrasi | $G_{01}$ (Wajah terasa tertarik/kering) $\land$ $G_{02}$ (Kulit mengelupas/bersisik) |
+| **H02** | Kulit Berminyak & Seborrhea | $G_{04}$ (Kilap berlebih di zona T) $\land$ $G_{05}$ (Pori-pori tampak membesar) |
+| **H03** | Acne Vulgaris (Jerawat Inflamasi) | $G_{11}$ (Benjolan jerawat merah/bernanah) $\land$ $G_{12}$ (Nyeri saat jerawat disentuh) |
+| **H04** | Komedo & Pori Tersumbat | $G_{04}$ (Kilap berlebih di zona T) $\land$ $G_{07}$ (Komedo hitam/putih di hidung & pipi) |
+| **H05** | Kulit Sensitif & Reaktif | $G_{13}$ (Kulit mudah memerah/perih) $\land$ $G_{14}$ (Sensasi terbakar terkena skincare/matahari) |
+| **H06** | Penuaan Dini (Premature Aging) | $G_{08}$ (Garis halus di sekitar mata/mulut) $\land$ $G_{09}$ (Kulit kendur & elastisitas berkurang) |
+| **H07** | Hiperpigmentasi / Flek Hitam | $G_{10}$ (Bercak kecokelatan/noda hitam pasca jerawat) $\land$ $G_{04}$ atau $G_{01}$ |
+
+---
+
+## Panduan Deployment ke Vercel
+
+Repositori ini siap di-deploy langsung ke Vercel:
 
 1. **Import Repositori**:
    - Buka [dashboard Vercel](https://vercel.com/new).
-   - Hubungkan akun GitHub Anda dan pilih repositori `skinexpert`.
+   - Hubungkan akun GitHub dan pilih repositori `https://github.com/oziajayakan/skinexpert.git`.
 2. **Deploy**:
-   - Klik **Deploy**.
-   - Vercel akan otomatis mendeteksi berkas `vercel.json` dan mem-build aplikasi menggunakan runtime `vercel-php@0.9.0`.
-3. **Konfigurasi Database di Vercel**:
-   - **Secara Default**: Aplikasi otomatis menggunakan database SQLite ter-bundle yang disalin ke `/tmp/skinexpert.sqlite` (writable serverless cache).
-   - **Opsional (Database Cloud MySQL)**: Jika ingin menggunakan database MySQL eksternal (misal: PlanetScale, TiDB Cloud, Aiven, Railway), cukup tambahkan Environment Variables di pengaturan Project Vercel:
-     - `DB_HOST` = host database Anda
-     - `DB_USER` = username database
-     - `DB_PASS` = password database
-     - `DB_NAME` = nama database
-     - `DB_PORT` = port (default: 3306)
+   - Klik **Deploy**. Vercel akan otomatis membaca file `vercel.json` dan mem-build menggunakan runtime `vercel-php@0.9.0`.
+3. **Database di Vercel**:
+   - **Mode SQLite bawaan**: Aplikasi otomatis menyalin database SQLite ke direktori writable `/tmp/skinexpert.sqlite` sehingga konsultasi dan admin langsung berfungsi.
+   - **Mode MySQL (Opsional)**: Jika ingin menggunakan cloud MySQL (Railway, Aiven, PlanetScale, TiDB), atur Environment Variables di project Vercel:
+     - `DB_HOST`, `DB_USER`, `DB_PASS`, `DB_NAME`, `DB_PORT`.
 
 ---
 
-## 💻 Menjalankan Secara Lokal
+## Menjalankan Secara Lokal
 
-### Menggunakan PHP Built-in Server (Rekomendasi):
-Cukup klik ganda berkas `jalankan_server.bat` atau jalankan perintah:
+Cukup jalankan PHP built-in server:
 ```bash
-php -S localhost:8000
+php -S 127.0.0.1:8000
 ```
-Buka peramban di `http://localhost:8000`.
-
-### Menggunakan Flask (Alternatif Python):
-Tersedia juga implementasi alternatif Python Flask di `app.py`:
-```bash
-pip install flask
-python app.py
-```
-Buka peramban di `http://127.0.0.1:5000`.
+atau klik dua kali file `jalankan_server.bat` di Windows. Buka peramban di `http://127.0.0.1:8000`.
 
 ---
 
-## 📂 Struktur Direktori
+## Struktur Direktori
 
 ```text
 skinexpert/
-├── admin/                  # Panel manajemen sistem pakar (CRUD Gejala, Kondisi, Aturan)
-│   ├── index.php           # Dashboard admin
-│   ├── gejala.php          # Manajemen gejala
-│   ├── kondisi.php         # Manajemen kondisi kulit
-│   └── aturan.php          # Manajemen basis aturan
-├── api/                    # Entry point serverless untuk Vercel
-│   └── index.php           # Router serverless vercel-php
+├── admin/                      # Manajemen Knowledge Base (CRUD Gejala, Kondisi, Aturan)
+│   ├── header.php              # Header admin & navigasi SVG
+│   ├── footer.php              # Footer admin
+│   ├── index.php               # Dashboard ringkasan KB
+│   ├── gejala.php              # Kelola 15 fakta gejala klinis (G)
+│   ├── kondisi.php             # Kelola 7 hipotesis kondisi kulit (H)
+│   └── aturan.php              # Kelola 14 kaidah aturan Horn (R)
+├── api/
+│   └── index.php               # Router serverless untuk Vercel
 ├── config/
-│   └── database.php        # Konfigurasi koneksi MySQL & SQLite adapter
-├── proses/
-│   ├── backward_chaining.php # Mesin inferensi Backward Chaining
-│   ├── forward_chaining.php  # Pengujian Forward Chaining
-│   └── api_backward.php      # Endpoint API Backward Chaining
+│   └── database.php            # Hybrid database connector (SQLite & MySQL)
+├── directives/
+│   └── backward_chaining_skin_diagnosis.md # SOP & spesifikasi logika inferensi
+├── execution/
+│   ├── export_products.py      # Ekspor data produk/pengetahuan
+│   ├── migrate_cascade_sqlite.py # Migrasi foreign key cascade SQLite
+│   └── seed_sqlite.py          # Seeder dataset awal
+├── includes/
+│   └── icons.php               # Pustaka helper 28 vektor stroke SVG modern
 ├── static/
-│   └── style.css           # Desain UI/UX & tema modern SkinExpert
-├── index.php               # Halaman beranda
-├── konsultasi.php          # Formulir konsultasi & visualisasi hasil
-├── riwayat.php             # Riwayat diagnosis pengguna
-├── skinexpert.sqlite       # Database SQLite lokal terisi data awal
-├── skinexpert_db.sql       # Skema DDL & dataset SQL
-├── vercel.json             # Konfigurasi routing & runtime Vercel
+│   └── style.css               # Desain UI/UX SkinExpert, token CSS & komponen SVG
+├── index.php                   # Beranda & panduan praktis
+├── konsultasi.php              # Halaman konsultasi & inferensi Backward Chaining
+├── latihan.php                 # Simulasi pengujian logika UNWAHA
+├── riwayat.php                 # Riwayat pemeriksaan pengguna
+├── skinexpert.sqlite           # Basis data SQLite lokal siap pakai
+├── skinexpert_db.sql           # Skema DDL & dataset SQL lengkap
+├── vercel.json                 # Konfigurasi routing serverless Vercel
+├── jalankan_server.bat         # Launcher server lokal Windows
 └── README.md
 ```
 
 ---
 
-## 📝 Lisensi & Hak Cipta
-Dibuat untuk sistem pakar diagnosis kondisi kulit wajah menggunakan metode Dynamic Backward Chaining.
+## Lisensi
+Sistem Pakar Diagnosis Kulit Wajah Backward Chaining. Open source dan siap digunakan untuk riset, skripsi, dan implementasi klinis.
