@@ -648,6 +648,99 @@ footer {
   border: 1px solid #fca5a5;
 }
 
+/* Comprehensive Clinical Evidence Matrix */
+.evidence-matrix-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.4rem;
+  margin-bottom: 1.8rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+}
+.evidence-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.9rem;
+}
+.evidence-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.85rem 1rem;
+  border-bottom: 2px solid #e2e8f0;
+  text-align: left;
+}
+.evidence-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+.evidence-table tr:hover td {
+  background: #f8fafc;
+}
+.evidence-table tr.row-target td {
+  background: #f0fdfa;
+}
+.evidence-table tr.row-proven td {
+  background: #f0fdf4;
+}
+
+/* Progress bar inside matrix */
+.evidence-bar-wrap {
+  width: 110px;
+  background: #e2e8f0;
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 0.5rem;
+}
+.evidence-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+.evidence-bar-fill.fill-proven { background: linear-gradient(90deg, #10b981, #059669); }
+.evidence-bar-fill.fill-indikasi { background: linear-gradient(90deg, #38bdf8, #0284c7); }
+.evidence-bar-fill.fill-warning { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
+.evidence-bar-fill.fill-empty { background: #cbd5e1; }
+
+/* 1-Click Verification Action Cards */
+.verify-section {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 2px solid #38bdf8;
+  border-radius: 16px;
+  padding: 1.4rem;
+  margin-bottom: 1.8rem;
+  box-shadow: 0 4px 16px rgba(56, 189, 248, 0.15);
+}
+.verify-action-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0.9rem;
+  margin-top: 1rem;
+}
+.verify-card-item {
+  background: #ffffff;
+  border: 1px solid #bae6fd;
+  border-radius: 12px;
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.8rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.verify-card-item:hover {
+  border-color: #0284c7;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.12);
+}
+
 /* ============ RESPONSIVE ============ */
 @media (max-width: 720px) {
   main { padding: 5rem 1rem 2rem; }

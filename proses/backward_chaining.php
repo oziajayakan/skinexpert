@@ -165,16 +165,17 @@ function evaluasiBackwardChaining($conn, array $selected_ids, ?int $targetGoalId
         $gejala_map[(int)$g['id']] = $g;
     }
 
-    // 2. Ambil semua kondisi kulit (Masalah / Goal - M)
+    // 2. Ambil seluruh kondisi kulit (Hipotesis / Goal - H)
     $kondisi_res = $conn->query("SELECT id, kode, nama, deskripsi, saran FROM kondisi_kulit ORDER BY kode ASC");
     $kondisi_all = [];
+    $targetKondisi = null;
     while ($k = $kondisi_res->fetch_assoc()) {
+        $kid = (int)$k['id'];
+        $k['is_target'] = ($targetGoalId !== null && $targetGoalId > 0 && $kid === $targetGoalId);
+        if ($k['is_target']) {
+            $targetKondisi = $k;
+        }
         $kondisi_all[] = $k;
-    }
-
-    // Filter jika pengguna memilih target Masalah (Goal) spesifik
-    if ($targetGoalId !== null && $targetGoalId > 0) {
-        $kondisi_all = array_values(array_filter($kondisi_all, fn($k) => (int)$k['id'] === $targetGoalId));
     }
 
     // 3. Ambil rules dan subgoals
@@ -210,41 +211,28 @@ function evaluasiBackwardChaining($conn, array $selected_ids, ?int $targetGoalId
         fn($id) => $id > 0
     )));
 
-    // ====== BACKWARD CHAINING VERIFIKASI LOGIKA MODUS PONENS ======
+    // ====== EVALUASI INFERENSI BACKWARD CHAINING MENYELURUH ======
     $trace = [];
+    $semua_bukti = [];
     $goals_terbukti = [];
+    $goals_indikasi = [];
+    $targetEval = null;
 
     foreach ($kondisi_all as $k) {
         $kid = (int)$k['id'];
         $rulesForGoal = array_values(array_filter($rule_list, fn($r) => $r['kondisi_id'] === $kid));
 
-        if (empty($rulesForGoal)) {
-            $trace[] = [
-                'kondisi' => $k,
-                'rule' => ['kode' => '-', 'nama' => 'Tidak Ada Aturan Aktif'],
-                'subgoals' => [],
-                'all_gejala' => [],
-                'matched' => [],
-                'missing' => [],
-                'matched_gejala' => [],
-                'missing_gejala' => [],
-                'score' => 0,
-                'full' => false,
-                'status' => 'TIDAK_ADA_ATURAN',
-                'formula' => '- → ' . $k['kode'],
-                'modus_ponens' => "Tidak ada aturan aktif di basis pengetahuan yang dapat membuktikan hipotesis {$k['kode']} ({$k['nama']})."
-            ];
-            continue;
-        }
+        $bestRuleMatch = null;
+        $maxScore = -1.0;
+        $allRulesEval = [];
 
         foreach ($rulesForGoal as $rule) {
             $subgoals = $rule['subgoals'];
             $matched = array_values(array_intersect($subgoals, $selected_set));
             $missing = array_values(array_diff($subgoals, $selected_set));
-            $score = !empty($subgoals) ? round((count($matched) / count($subgoals)) * 100, 1) : 0;
-            $full = !empty($subgoals) && empty($missing); // Seluruh premis (P1 ∧ P2 ∧ ... Pn) TRUE
+            $score = !empty($subgoals) ? round((count($matched) / count($subgoals)) * 100, 1) : 0.0;
+            $full = !empty($subgoals) && empty($missing); // P1 ∧ P2 ∧ ... Pn terpenuhi seluruhnya
 
-            // Ambil objek gejala untuk tampilan rapi
             $matched_gejala = [];
             foreach ($matched as $mid) {
                 if (isset($gejala_map[$mid])) {
@@ -269,7 +257,7 @@ function evaluasiBackwardChaining($conn, array $selected_ids, ?int $targetGoalId
             $kodeGejala = array_map(fn($g) => $g['kode'], $all_gejala);
             $formula_str = "(" . implode(" ∧ ", $kodeGejala) . ") → " . $k['kode'];
 
-            $traceItem = [
+            $ruleEval = [
                 'kondisi' => $k,
                 'rule' => $rule,
                 'subgoals' => $subgoals,
@@ -280,22 +268,116 @@ function evaluasiBackwardChaining($conn, array $selected_ids, ?int $targetGoalId
                 'missing_gejala' => $missing_gejala,
                 'score' => $score,
                 'full' => $full,
-                'status' => $full ? 'TERBUKTI' : (count($matched) > 0 ? 'GUGUR_BACKTRACK' : 'TIDAK_TERPENUHI'),
+                'status' => $full ? 'TERBUKTI' : (count($matched) > 0 ? 'INDIKASI_PARSIAL' : 'BELUM_TERPENUHI'),
                 'formula' => $formula_str,
                 'modus_ponens' => $full 
-                    ? "Semua premis (" . implode(" & ", $kodeGejala) . ") terpenuhi pada fakta pengguna. Berdasarkan Modus Ponens, hipotesis {$k['kode']} ({$k['nama']}) dinyatakan TERBUKTI (BENAR)."
-                    : "Premis aturan belum lengkap (" . count($matched) . " dari " . count($subgoals) . " fakta terpenuhi). Aturan gugur dan sistem melakukan backtracking."
+                    ? "Premis (" . implode(" ∧ ", $kodeGejala) . ") terpenuhi. Berdasarkan Modus Ponens, hipotesis {$k['kode']} ({$k['nama']}) dinyatakan TERBUKTI."
+                    : "Premis terpenuhi " . count($matched) . " dari " . count($subgoals) . " gejala prasyarat."
             ];
 
-            $trace[] = $traceItem;
+            $allRulesEval[] = $ruleEval;
+            $trace[] = $ruleEval;
 
             if ($full) {
-                $goals_terbukti[] = $traceItem;
+                // Rule yang full langsung diprioritaskan
+                if ($bestRuleMatch === null || !$bestRuleMatch['full'] || $score > $maxScore) {
+                    $maxScore = $score;
+                    $bestRuleMatch = $ruleEval;
+                }
+            } elseif ($score > $maxScore) {
+                $maxScore = $score;
+                $bestRuleMatch = $ruleEval;
             }
+        }
+
+        // Jika tidak ada aturan sama sekali untuk kondisi ini
+        if ($bestRuleMatch === null) {
+            $bestRuleMatch = [
+                'kondisi' => $k,
+                'rule' => ['kode' => '-', 'nama' => 'Tidak Ada Aturan Aktif'],
+                'subgoals' => [],
+                'all_gejala' => [],
+                'matched' => [],
+                'missing' => [],
+                'matched_gejala' => [],
+                'missing_gejala' => [],
+                'score' => 0.0,
+                'full' => false,
+                'status' => 'TIDAK_ADA_ATURAN',
+                'formula' => '- → ' . $k['kode'],
+                'modus_ponens' => "Tidak ada aturan inferensi aktif di basis pengetahuan."
+            ];
+        }
+
+        // Tentukan label status komprehensif
+        $cScore = $bestRuleMatch['score'];
+        $cFull = $bestRuleMatch['full'];
+        if ($cFull) {
+            $statusCategory = 'TERBUKTI';
+            $statusLabel = 'Terbukti (100%)';
+        } elseif ($cScore >= 50.0) {
+            $statusCategory = 'INDIKASI_KUAT';
+            $statusLabel = "Indikasi Kuat ({$cScore}%)";
+        } elseif ($cScore > 0.0) {
+            $statusCategory = 'INDIKASI_AWAL';
+            $statusLabel = "Observasi Awal ({$cScore}%)";
+        } else {
+            $statusCategory = 'BELUM_ADA_BUKTI';
+            $statusLabel = 'Belum Ada Bukti (0%)';
+        }
+
+        $buktiItem = [
+            'kondisi' => $k,
+            'is_target' => !empty($k['is_target']),
+            'best_rule' => $bestRuleMatch['rule'],
+            'score' => $cScore,
+            'full' => $cFull,
+            'status' => $statusCategory,
+            'status_label' => $statusLabel,
+            'formula' => $bestRuleMatch['formula'],
+            'matched_gejala' => $bestRuleMatch['matched_gejala'],
+            'missing_gejala' => $bestRuleMatch['missing_gejala'],
+            'rules_eval' => $allRulesEval,
+            'modus_ponens' => $bestRuleMatch['modus_ponens']
+        ];
+
+        $semua_bukti[] = $buktiItem;
+
+        if ($cFull) {
+            $goals_terbukti[] = $buktiItem;
+        } elseif ($cScore >= 50.0) {
+            $goals_indikasi[] = $buktiItem;
+        }
+
+        if (!empty($k['is_target'])) {
+            $targetEval = $buktiItem;
         }
     }
 
-    // Urutkan trace: yang TERBUKTI terlebih dahulu, lalu skor tertinggi
+    // Urutkan semua bukti:
+    // 1. Jika pengguna memilih target spesifik dan memiliki skor >= 50%, taruh di paling atas
+    // 2. Kemudian kondisi yang TERBUKTI (100%)
+    // 3. Kemudian skor tertinggi ke terendah
+    // 4. Terakhir kode kondisi ASC
+    usort($semua_bukti, function($a, $b) {
+        $aTargetPrior = ($a['is_target'] && $a['score'] >= 50.0) ? 1 : 0;
+        $bTargetPrior = ($b['is_target'] && $b['score'] >= 50.0) ? 1 : 0;
+        if ($aTargetPrior !== $bTargetPrior) {
+            return $bTargetPrior <=> $aTargetPrior;
+        }
+        if ($a['full'] !== $b['full']) {
+            return $a['full'] ? -1 : 1;
+        }
+        if ($b['score'] != $a['score']) {
+            return $b['score'] <=> $a['score'];
+        }
+        if ($a['is_target'] !== $b['is_target']) {
+            return $a['is_target'] ? -1 : 1;
+        }
+        return strcmp($a['kondisi']['kode'], $b['kondisi']['kode']);
+    });
+
+    // Urutkan trace: TERBUKTI dulu, lalu skor desc
     usort($trace, function($a, $b) {
         if ($a['full'] !== $b['full']) {
             return $a['full'] ? -1 : 1;
@@ -306,29 +388,39 @@ function evaluasiBackwardChaining($conn, array $selected_ids, ?int $targetGoalId
         return strcmp($a['kondisi']['kode'], $b['kondisi']['kode']);
     });
 
-    // Cari pertanyaan verifikasi lanjutan (gejala yang belum terjawab pada aturan paling mendekati)
-    $pertanyaan_lanjutan = null;
-    if (empty($goals_terbukti) && !empty($trace)) {
-        foreach ($trace as $t) {
-            if (!empty($t['missing_gejala']) && !empty($t['matched_gejala'])) {
-                $pertanyaan_lanjutan = [
-                    'kondisi' => $t['kondisi'],
-                    'rule' => $t['rule'],
-                    'gejala' => $t['missing_gejala'][0],
-                    'score' => $t['score']
+    // Ambil opsi verifikasi 1-klik untuk melengkapi bukti menjadi 100%
+    $verifikasi_opsi = [];
+    $seenSymptomIds = [];
+
+    // Prioritaskan kandidat indikasi kuat (>= 50% tapi belum 100%)
+    $kandidatVerifikasi = !empty($goals_indikasi) ? $goals_indikasi : array_filter($semua_bukti, fn($b) => $b['score'] > 0 && !$b['full']);
+    foreach ($kandidatVerifikasi as $cand) {
+        foreach ($cand['missing_gejala'] as $mg) {
+            $mgId = (int)$mg['id'];
+            if (!in_array($mgId, $seenSymptomIds)) {
+                $seenSymptomIds[] = $mgId;
+                $verifikasi_opsi[] = [
+                    'gejala' => $mg,
+                    'kondisi' => $cand['kondisi'],
+                    'rule' => $cand['best_rule'],
+                    'score_sekarang' => $cand['score'],
+                    'score_prospek' => 100.0
                 ];
-                break;
             }
         }
     }
 
-    $top = !empty($goals_terbukti) ? $goals_terbukti[0] : (!empty($trace) ? $trace[0] : null);
+    $top = !empty($goals_terbukti) ? $goals_terbukti[0] : (!empty($semua_bukti) ? $semua_bukti[0] : null);
 
     return [
-        'trace' => $trace,
+        'semua_bukti' => $semua_bukti,
         'goals_terbukti' => $goals_terbukti,
+        'goals_indikasi' => $goals_indikasi,
+        'verifikasi_opsi' => $verifikasi_opsi,
+        'target_kondisi' => $targetKondisi,
+        'target_eval' => $targetEval,
         'top' => $top,
-        'pertanyaan_lanjutan' => $pertanyaan_lanjutan,
+        'trace' => $trace,
         'n_selected' => count($selected_set),
         'n_gejala' => count($gejala_map),
         'selected_set' => $selected_set,

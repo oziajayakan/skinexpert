@@ -38,8 +38,9 @@ Mengembangkan sistem pakar pra-diagnosis dan identifikasi kondisi kulit wajah be
 ## Prinsip Desain UI/UX
 - **Ringkas & Berorientasi Panduan**: Menghindari paragraf panjang atau teks akademis yang membingungkan.
 - **Ikon Vektor SVG**: Menggunakan ikon SVG stroke presisi tinggi via `includes/icons.php` (`icon('name', $class, $size)`) tanpa emoji sistem demi konsistensi tampilan lintas sistem operasi.
-- **Hasil Aksi Nyata**: Menampilkan kesimpulan pra-diagnosis yang jelas, panduan perawatan yang dapat segera diterapkan, dan opsi verifikasi 1-klik.
-- **Trace Teknis Tersembunyi Rapi**: Formula Modus Ponens dan detail premis disimpan dalam accordion collapsible (`<details>`) agar layar tetap bersih.
+- **Hasil Aksi Nyata & Bukti Menyeluruh**: Menampilkan kesimpulan pra-diagnosis yang jelas, panduan perawatan yang dapat segera diterapkan, dan matriks bukti lengkap untuk seluruh 7 kondisi kulit.
+- **Bebas Siklus Konsultasi Ulang**: Hasil dengan kecocokan parsial ($\ge 50\%$) disajikan sebagai *Indikasi Klinis Terdeteksi* dengan rekomendasi perawatan awal yang aman serta tombol verifikasi 1-klik (`+ Konfirmasi Gejala Ini (Buktikan 100%)`) tanpa memaksa pengguna mengulang konsultasi dari awal.
+- **Dukungan Penyesuaian Gejala (`?edit=1`)**: Pengguna dapat mengubah atau menambah gejala tanpa kehilangan pilihan sebelumnya.
 - **Tema Sistem Pakar Medis & Klinis**: Desain antarmuka berorientasi klinis murni (kartu diagnosis rapi, badge kode pill presisi, dan palette warna emerald/teal higienis) tanpa elemen simulasi slide/kelas.
 - **Arsitektur Ramping (Zero Waste)**: Tidak menyimpan file legacy atau modul simulasi yang menyimpang dari tema sistem pakar kulit.
 
