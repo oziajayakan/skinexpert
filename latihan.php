@@ -38,12 +38,12 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' || isset($_GET['auto'])) {
   <aside class="sidebar" id="sidebar">
     <p class="sidebar-title">Menu SkinExpert</p>
     <a href="index.php"><span class="icon">🏠</span> Beranda</a>
-    <a href="konsultasi.php"><span class="icon">💬</span> Konsultasi (Kulit)</a>
+    <a href="konsultasi.php"><span class="icon">💬</span> Konsultasi Kulit</a>
     <a href="latihan.php"><span class="icon">🧪</span> Skenario Latihan (UNWAHA)</a>
-    <a href="admin/gejala.php"><span class="icon">🔍</span> Data Fakta (F)</a>
-    <a href="admin/kondisi.php"><span class="icon">🌿</span> Data Masalah (M)</a>
+    <a href="admin/gejala.php"><span class="icon">🔍</span> Data Fakta Gejala (G)</a>
+    <a href="admin/kondisi.php"><span class="icon">🌿</span> Data Kondisi Kulit (H)</a>
     <a href="admin/aturan.php"><span class="icon">🧩</span> Basis Aturan (R)</a>
-    <a href="riwayat.php"><span class="icon">📋</span> Riwayat</a>
+    <a href="riwayat.php"><span class="icon">📋</span> Riwayat Pemeriksaan</a>
   </aside>
 
   <main>

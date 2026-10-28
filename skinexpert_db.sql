@@ -1,286 +1,141 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Waktu pembuatan: 24 Okt 2026 pada 07.39
--- Versi server: 10.4.32-MariaDB
--- Versi PHP: 8.2.12
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+-- Database: `skinexpert_db` - Knowledge Base Skin Diagnosis (Backward Chaining)
+SET SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO';
 START TRANSACTION;
-SET time_zone = "+00:00";
+SET time_zone = '+00:00';
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `skinexpert_db`
---
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `gejala`
---
+DROP TABLE IF EXISTS `rule_gejala`;
+DROP TABLE IF EXISTS `pemeriksaan_gejala`;
+DROP TABLE IF EXISTS `rules`;
+DROP TABLE IF EXISTS `pemeriksaan`;
+DROP TABLE IF EXISTS `kondisi_kulit`;
+DROP TABLE IF EXISTS `gejala`;
 
 CREATE TABLE `gejala` (
-  `id` int(11) NOT NULL,
-  `kode` varchar(10) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `kode` varchar(10) NOT NULL UNIQUE,
   `nama` varchar(150) NOT NULL,
   `deskripsi` text DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data untuk tabel `gejala`
---
-
-INSERT INTO `gejala` (`id`, `kode`, `nama`, `deskripsi`, `created_at`) VALUES
-(1, 'G01', 'Komedo terlihat', 'Tampak titik komedo pada kulit wajah.', '2026-10-22 15:19:13'),
-(2, 'G02', 'Kulit tampak berminyak', 'Kulit wajah tampak berminyak.', '2026-10-22 15:19:13'),
-(3, 'G03', 'Pori-pori tampak tersumbat', 'Pori-pori tampak tersumbat.', '2026-10-22 15:19:13'),
-(4, 'G04', 'Terdapat benjolan kecil', 'Terlihat benjolan kecil pada kulit wajah.', '2026-10-22 15:19:13'),
-(5, 'G05', 'Jerawat tampak merah', 'Terdapat benjolan menyerupai jerawat yang tampak merah.', '2026-10-22 15:19:13'),
-(6, 'G06', 'Jerawat terasa nyeri', 'Benjolan menyerupai jerawat terasa nyeri.', '2026-10-22 15:19:13'),
-(7, 'G07', 'Wajah tampak mengilap', 'Permukaan wajah tampak mengilap.', '2026-10-22 15:19:13');
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `kondisi_kulit`
---
+INSERT INTO `gejala` (`id`, `kode`, `nama`, `deskripsi`) VALUES
+(1, 'G01', 'Kulit terasa kering atau kasar', 'Permukaan kulit wajah terasa kasar, bersisik halus, atau kehilangan kelembapan alami.'),
+(2, 'G02', 'Kulit mengelupas atau bersisik', 'Tampak serpihan kulit halus yang mengelupas terutama saat tersentuh atau terkena air.'),
+(3, 'G03', 'Sensasi kencang setelah cuci muka', 'Kulit terasa tertarik kencang dan kaku beberapa menit setelah mencuci wajah.'),
+(4, 'G04', 'Wajah tampak mengilap / berminyak', 'Tampak lapisan sebum/minyak berlebih di seluruh area wajah dalam hitungan jam.'),
+(5, 'G05', 'Pori-pori tampak membesar', 'Ukuran pori-pori terlihat jelas dan terbuka pada area hidung dan pipi.'),
+(6, 'G06', 'Riasan / bedak cepat luntur', 'Make-up atau tabir surya mudah luntur atau bergeser akibat produksi sebum.'),
+(7, 'G07', 'Minyak berlebih di area T-Zone', 'Minyak hanya terkonsentrasi di dahi, hidung, dan dagu (zona T).'),
+(8, 'G08', 'Area pipi terasa normal atau kering', 'Kulit di kedua pipi tidak berminyak, cenderung normal atau terasa kering.'),
+(9, 'G09', 'Tampak komedo hitam atau putih', 'Terdapat bintik blackhead atau whitehead di hidung, dahi, atau dagu.'),
+(10, 'G10', 'Pori-pori tersumbat / bruntusan', 'Tekstur kulit bergerigi kasar atau bruntusan akibat penyumbatan sebum.'),
+(11, 'G11', 'Benjolan jerawat tampak merah', 'Terdapat papula jerawat yang meradang kemerahan di area wajah.'),
+(12, 'G12', 'Jerawat terasa nyeri atau bengkak', 'Jerawat terasa berdenyut, bengkak, atau mulai timbul nanah (pustula).'),
+(13, 'G13', 'Kulit mudah memerah', 'Kulit wajah cepat merah saat terkena matahari, udara panas, atau gesekan.'),
+(14, 'G14', 'Sensasi perih, gatal, atau menyengat', 'Kulit mudah terasa perih, gatal, atau rasa panas saat memakai produk baru.'),
+(15, 'G15', 'Kulit kusam dan tampak garis halus', 'Wajah kehilangan kilau sehat dan tampak garis-garis halus akibat dehidrasi.');
 
 CREATE TABLE `kondisi_kulit` (
-  `id` int(11) NOT NULL,
-  `kode` varchar(10) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `kode` varchar(10) NOT NULL UNIQUE,
   `nama` varchar(150) NOT NULL,
   `deskripsi` text DEFAULT NULL,
   `saran` text DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data untuk tabel `kondisi_kulit`
---
-
-INSERT INTO `kondisi_kulit` (`id`, `kode`, `nama`, `deskripsi`, `saran`, `created_at`) VALUES
-(1, 'K01', 'Indikasi komedo', 'Kondisi awal yang memiliki gejala menyerupai komedo.', 'Gunakan perawatan kulit yang lembut. Konsultasikan dengan dokter jika menetap atau memburuk.', '2026-10-22 15:19:13'),
-(2, 'K02', 'Kulit cenderung berminyak', 'Kondisi kulit dengan ciri minyak berlebih.', 'Gunakan pembersih lembut dan pelembap nonkomedogenik sesuai kebutuhan.', '2026-10-22 15:19:13'),
-(3, 'K03', 'Indikasi jerawat meradang', 'Gejala yang dapat menyerupai jerawat meradang.', 'Hindari memencet jerawat. Konsultasikan dengan tenaga kesehatan jika nyeri atau memburuk.', '2026-10-22 15:19:13'),
-(4, 'K04', 'Indikasi kulit rentan berjerawat', 'Kondisi awal dengan benjolan kecil dan kulit berminyak.', 'Perhatikan perubahan kulit dan konsultasikan dengan dokter jika keluhan berlanjut.', '2026-10-22 15:19:13');
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `pemeriksaan`
---
-
-CREATE TABLE `pemeriksaan` (
-  `id` int(11) NOT NULL,
-  `tanggal` timestamp NOT NULL DEFAULT current_timestamp(),
-  `hasil` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data untuk tabel `pemeriksaan`
---
-
-INSERT INTO `pemeriksaan` (`id`, `tanggal`, `hasil`) VALUES
-(2, '2026-10-22 16:05:29', '[]'),
-(3, '2026-10-22 16:31:32', '[{\"kode\":\"K01\",\"nama\":\"Indikasi komedo\",\"deskripsi\":\"Kondisi awal yang memiliki gejala menyerupai komedo.\",\"saran\":\"Gunakan perawatan kulit yang lembut. Konsultasikan dengan dokter jika menetap atau memburuk.\",\"aturan\":[\"R01\"]}]'),
-(4, '2026-10-22 16:31:41', '[]'),
-(5, '2026-10-22 16:32:04', '[{\"kode\":\"K02\",\"nama\":\"Kulit cenderung berminyak\",\"deskripsi\":\"Kondisi kulit dengan ciri minyak berlebih.\",\"saran\":\"Gunakan pembersih lembut dan pelembap nonkomedogenik sesuai kebutuhan.\",\"aturan\":[\"R02\"]}]'),
-(6, '2026-10-22 16:32:17', '[{\"kode\":\"K03\",\"nama\":\"Indikasi jerawat meradang\",\"deskripsi\":\"Gejala yang dapat menyerupai jerawat meradang.\",\"saran\":\"Hindari memencet jerawat. Konsultasikan dengan tenaga kesehatan jika nyeri atau memburuk.\",\"aturan\":[\"R03\"]}]'),
-(7, '2026-10-22 16:32:30', '[{\"kode\":\"K04\",\"nama\":\"Indikasi kulit rentan berjerawat\",\"deskripsi\":\"Kondisi awal dengan benjolan kecil dan kulit berminyak.\",\"saran\":\"Perhatikan perubahan kulit dan konsultasikan dengan dokter jika keluhan berlanjut.\",\"aturan\":[\"R04\"]}]'),
-(8, '2026-10-22 16:33:43', '[{\"kode\":\"K04\",\"nama\":\"Indikasi kulit rentan berjerawat\",\"deskripsi\":\"Kondisi awal dengan benjolan kecil dan kulit berminyak.\",\"saran\":\"Perhatikan perubahan kulit dan konsultasikan dengan dokter jika keluhan berlanjut.\",\"aturan\":[\"R04\"]}]'),
-(9, '2026-10-22 16:41:19', '[]'),
-(10, '2026-10-22 16:41:29', '[{\"kode\":\"K01\",\"nama\":\"Indikasi komedo\",\"deskripsi\":\"Kondisi awal yang memiliki gejala menyerupai komedo.\",\"saran\":\"Gunakan perawatan kulit yang lembut. Konsultasikan dengan dokter jika menetap atau memburuk.\",\"aturan\":[\"R01\"]}]');
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `pemeriksaan_gejala`
---
-
-CREATE TABLE `pemeriksaan_gejala` (
-  `pemeriksaan_id` int(11) NOT NULL,
-  `gejala_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data untuk tabel `pemeriksaan_gejala`
---
-
-INSERT INTO `pemeriksaan_gejala` (`pemeriksaan_id`, `gejala_id`) VALUES
-(2, 1),
-(3, 1),
-(3, 3),
-(4, 1),
-(5, 2),
-(5, 7),
-(6, 5),
-(6, 6),
-(7, 2),
-(7, 4),
-(8, 2),
-(8, 4),
-(9, 3),
-(10, 1),
-(10, 3);
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `rules`
---
+INSERT INTO `kondisi_kulit` (`id`, `kode`, `nama`, `deskripsi`, `saran`) VALUES
+(1, 'H01', 'Kulit Kering (Dry Skin)', 'Kondisi kulit yang kekurangan kadar lipid dan minyak alami pelindung (skin barrier).', 'Gunakan pembersih wajah bertekstur krim (gentle low-pH), pelembap berkandungan ceramide atau asam lemak esensial, dan hindari eksfoliasi fisik yang kasar.'),
+(2, 'H02', 'Kulit Berminyak (Oily Skin)', 'Kondisi kelenjar sebasea memproduksi sebum berlebih di seluruh area wajah.', 'Gunakan pembersih berbasis gel dengan Salicylic Acid (BHA), pelembap ringan berbahan dasar air (oil-free/gel), dan tabir surya bertipe matte.'),
+(3, 'H03', 'Kulit Kombinasi (Combination Skin)', 'Kondisi produksi minyak tinggi di zona-T tetapi normal atau kering di area pipi.', 'Gunakan pembersih lembut seimbang, hidrasi ringan untuk seluruh wajah, dan pelembap ekstra khusus area pipi yang kering.'),
+(4, 'H04', 'Indikasi Komedo (Comedonal Acne)', 'Penyumbatan folikel pori oleh penumpukan sel kulit mati dan sebum tanpa peradangan aktif.', 'Gunakan bahan aktif eksfoliasi kimia BHA (Salicylic Acid 1-2%), lakukan double cleansing di malam hari, dan pilih produk berlabel non-comedogenic.'),
+(5, 'H05', 'Indikasi Jerawat Meradang (Inflammatory Acne)', 'Peradangan aktif pada folikel akibat infeksi bakteri C. acnes yang memicu benjolan merah dan nyeri.', 'Gunakan spot treatment berformula Benzoyl Peroxide atau Centella/Tea Tree, hindari memencet jerawat, dan konsultasikan ke dokter kulit jika bertambah banyak.'),
+(6, 'H06', 'Kulit Sensitif & Iritasi Ringan (Sensitive Skin)', 'Skin barrier yang rapuh dan reaktif terhadap rangsangan lingkungan atau formula kosmetik.', 'Gunakan produk berlabel hypoallergenic, bebas pewangi (fragrance-free) dan bebas alkohol denat. Gunakan pelembap penenang berbahan Centella Asiatica atau Panthenol.'),
+(7, 'H07', 'Kulit Dehidrasi (Dehydrated Skin)', 'Kondisi kulit kekurangan kadar air, seringkali terjadi bahkan pada permukaan kulit yang berminyak.', 'Tingkatkan hidrasi kulit dengan serum Hyaluronic Acid atau Glycerin, gunakan pelembap pengunci hidrasi, dan cukupi asupan cairan harian minimal 2 liter.');
 
 CREATE TABLE `rules` (
-  `id` int(11) NOT NULL,
-  `kode` varchar(10) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `kode` varchar(10) NOT NULL UNIQUE,
   `nama` varchar(150) NOT NULL,
   `kondisi_kulit_id` int(11) NOT NULL,
   `aktif` tinyint(1) NOT NULL DEFAULT 1,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `fk_rules_kondisi` (`kondisi_kulit_id`),
+  CONSTRAINT `fk_rules_kondisi` FOREIGN KEY (`kondisi_kulit_id`) REFERENCES `kondisi_kulit` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data untuk tabel `rules`
---
-
-INSERT INTO `rules` (`id`, `kode`, `nama`, `kondisi_kulit_id`, `aktif`, `created_at`) VALUES
-(1, 'R01', 'Identifikasi indikasi komedo', 1, 1, '2026-10-22 15:19:13'),
-(2, 'R02', 'Identifikasi kulit cenderung berminyak', 2, 1, '2026-10-22 15:19:13'),
-(3, 'R03', 'Identifikasi indikasi jerawat meradang', 3, 1, '2026-10-22 15:19:13'),
-(4, 'R04', 'Identifikasi kulit rentan berjerawat', 4, 1, '2026-10-22 15:19:13');
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `rule_gejala`
---
+INSERT INTO `rules` (`id`, `kode`, `nama`, `kondisi_kulit_id`, `aktif`) VALUES
+(1, 'R01', 'Aturan Kulit Kering 1', 1, 1),
+(2, 'R02', 'Aturan Kulit Kering 2', 1, 1),
+(3, 'R03', 'Aturan Kulit Berminyak 1', 2, 1),
+(4, 'R04', 'Aturan Kulit Berminyak 2', 2, 1),
+(5, 'R05', 'Aturan Kulit Kombinasi 1', 3, 1),
+(6, 'R06', 'Aturan Indikasi Komedo 1', 4, 1),
+(7, 'R07', 'Aturan Indikasi Komedo 2', 4, 1),
+(8, 'R08', 'Aturan Jerawat Meradang 1', 5, 1),
+(9, 'R09', 'Aturan Jerawat Meradang 2', 5, 1),
+(10, 'R10', 'Aturan Kulit Sensitif 1', 6, 1),
+(11, 'R11', 'Aturan Kulit Sensitif 2', 6, 1),
+(12, 'R12', 'Aturan Kulit Dehidrasi 1', 7, 1),
+(13, 'R13', 'Aturan Kulit Dehidrasi 2', 7, 1),
+(14, 'R14', 'Aturan Kulit Kombinasi 2', 3, 1);
 
 CREATE TABLE `rule_gejala` (
   `rule_id` int(11) NOT NULL,
-  `gejala_id` int(11) NOT NULL
+  `gejala_id` int(11) NOT NULL,
+  PRIMARY KEY (`rule_id`, `gejala_id`),
+  KEY `fk_rg_gejala` (`gejala_id`),
+  CONSTRAINT `fk_rg_rule` FOREIGN KEY (`rule_id`) REFERENCES `rules` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_rg_gejala` FOREIGN KEY (`gejala_id`) REFERENCES `gejala` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data untuk tabel `rule_gejala`
---
 
 INSERT INTO `rule_gejala` (`rule_id`, `gejala_id`) VALUES
 (1, 1),
-(1, 3),
-(2, 2),
-(2, 7),
+(1, 2),
+(2, 1),
+(2, 3),
+(3, 4),
 (3, 5),
-(3, 6),
-(4, 2),
-(4, 4);
+(4, 4),
+(4, 6),
+(5, 7),
+(5, 8),
+(6, 9),
+(6, 10),
+(7, 4),
+(7, 9),
+(8, 11),
+(8, 12),
+(9, 10),
+(9, 11),
+(10, 13),
+(10, 14),
+(11, 3),
+(11, 14),
+(12, 1),
+(12, 15),
+(13, 3),
+(13, 4),
+(14, 6),
+(14, 7);
 
---
--- Indexes for dumped tables
---
+CREATE TABLE `pemeriksaan` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `tanggal` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `hasil` text DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Indeks untuk tabel `gejala`
---
-ALTER TABLE `gejala`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `kode` (`kode`);
+CREATE TABLE `pemeriksaan_gejala` (
+  `pemeriksaan_id` int(11) NOT NULL,
+  `gejala_id` int(11) NOT NULL,
+  PRIMARY KEY (`pemeriksaan_id`, `gejala_id`),
+  KEY `fk_pg_gejala` (`gejala_id`),
+  CONSTRAINT `fk_pg_pemeriksaan` FOREIGN KEY (`pemeriksaan_id`) REFERENCES `pemeriksaan` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_pg_gejala` FOREIGN KEY (`gejala_id`) REFERENCES `gejala` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Indeks untuk tabel `kondisi_kulit`
---
-ALTER TABLE `kondisi_kulit`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `kode` (`kode`);
-
---
--- Indeks untuk tabel `pemeriksaan`
---
-ALTER TABLE `pemeriksaan`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indeks untuk tabel `pemeriksaan_gejala`
---
-ALTER TABLE `pemeriksaan_gejala`
-  ADD PRIMARY KEY (`pemeriksaan_id`,`gejala_id`),
-  ADD KEY `gejala_id` (`gejala_id`);
-
---
--- Indeks untuk tabel `rules`
---
-ALTER TABLE `rules`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `kode` (`kode`),
-  ADD KEY `kondisi_kulit_id` (`kondisi_kulit_id`);
-
---
--- Indeks untuk tabel `rule_gejala`
---
-ALTER TABLE `rule_gejala`
-  ADD PRIMARY KEY (`rule_id`,`gejala_id`),
-  ADD KEY `gejala_id` (`gejala_id`);
-
---
--- AUTO_INCREMENT untuk tabel yang dibuang
---
-
---
--- AUTO_INCREMENT untuk tabel `gejala`
---
-ALTER TABLE `gejala`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
-
---
--- AUTO_INCREMENT untuk tabel `kondisi_kulit`
---
-ALTER TABLE `kondisi_kulit`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- AUTO_INCREMENT untuk tabel `pemeriksaan`
---
-ALTER TABLE `pemeriksaan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
-
---
--- AUTO_INCREMENT untuk tabel `rules`
---
-ALTER TABLE `rules`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
---
-
---
--- Ketidakleluasaan untuk tabel `pemeriksaan_gejala`
---
-ALTER TABLE `pemeriksaan_gejala`
-  ADD CONSTRAINT `pemeriksaan_gejala_ibfk_1` FOREIGN KEY (`pemeriksaan_id`) REFERENCES `pemeriksaan` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `pemeriksaan_gejala_ibfk_2` FOREIGN KEY (`gejala_id`) REFERENCES `gejala` (`id`);
-
---
--- Ketidakleluasaan untuk tabel `rules`
---
-ALTER TABLE `rules`
-  ADD CONSTRAINT `rules_ibfk_1` FOREIGN KEY (`kondisi_kulit_id`) REFERENCES `kondisi_kulit` (`id`) ON UPDATE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `rule_gejala`
---
-ALTER TABLE `rule_gejala`
-  ADD CONSTRAINT `rule_gejala_ibfk_1` FOREIGN KEY (`rule_id`) REFERENCES `rules` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `rule_gejala_ibfk_2` FOREIGN KEY (`gejala_id`) REFERENCES `gejala` (`id`);
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

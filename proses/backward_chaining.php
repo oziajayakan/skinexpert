@@ -306,12 +306,29 @@ function evaluasiBackwardChaining($conn, array $selected_ids, ?int $targetGoalId
         return strcmp($a['kondisi']['kode'], $b['kondisi']['kode']);
     });
 
+    // Cari pertanyaan verifikasi lanjutan (gejala yang belum terjawab pada aturan paling mendekati)
+    $pertanyaan_lanjutan = null;
+    if (empty($goals_terbukti) && !empty($trace)) {
+        foreach ($trace as $t) {
+            if (!empty($t['missing_gejala']) && !empty($t['matched_gejala'])) {
+                $pertanyaan_lanjutan = [
+                    'kondisi' => $t['kondisi'],
+                    'rule' => $t['rule'],
+                    'gejala' => $t['missing_gejala'][0],
+                    'score' => $t['score']
+                ];
+                break;
+            }
+        }
+    }
+
     $top = !empty($goals_terbukti) ? $goals_terbukti[0] : (!empty($trace) ? $trace[0] : null);
 
     return [
         'trace' => $trace,
         'goals_terbukti' => $goals_terbukti,
         'top' => $top,
+        'pertanyaan_lanjutan' => $pertanyaan_lanjutan,
         'n_selected' => count($selected_set),
         'n_gejala' => count($gejala_map),
         'selected_set' => $selected_set,

@@ -205,11 +205,11 @@ if (!isset($judulHalaman)) {
     <h2>🌿 SkinExpert — Knowledge Base Admin</h2>
     <nav>
         <a href="index.php">Dashboard</a>
-        <a href="gejala.php">Data Fakta (F)</a>
-        <a href="kondisi.php">Data Masalah (M)</a>
+        <a href="gejala.php">Fakta Gejala (G)</a>
+        <a href="kondisi.php">Kondisi Kulit (H)</a>
         <a href="aturan.php">Basis Aturan (R)</a>
-        <a href="../latihan.php">Skenario Latihan</a>
         <a href="../riwayat.php">Riwayat</a>
+        <a href="../latihan.php">Skenario Latihan</a>
         <a href="../index.php">Website Utama</a>
     </nav>
 </header>
