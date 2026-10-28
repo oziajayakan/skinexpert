@@ -103,9 +103,10 @@ if (!isset($judulHalaman)) {
     <h2>SkinExpert — Admin</h2>
     <nav>
         <a href="index.php">Dashboard</a>
-        <a href="gejala.php">Data Gejala</a>
-        <a href="kondisi.php">Data Kondisi</a>
-        <a href="aturan.php">Data Aturan</a>
+        <a href="gejala.php">Data Fakta (F)</a>
+        <a href="kondisi.php">Data Masalah (M)</a>
+        <a href="aturan.php">Basis Aturan (R)</a>
+        <a href="../latihan.php">Skenario Latihan</a>
         <a href="../index.php">Website Utama</a>
     </nav>
 </header>

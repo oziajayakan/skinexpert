@@ -8,19 +8,26 @@ Sistem ini membantu pengguna mengidentifikasi kondisi kulit (misal: Jerawat Vulg
 
 ## ✨ Fitur Utama
 
-1. **Konsultasi Interaktif**:
-   - Pemilihan gejala klinis kulit wajah dengan fitur pencarian cepat.
-   - Evaluasi inferensi **Backward Chaining** untuk memverifikasi subgoal kondisi kulit yang paling cocok.
-   - Visualisasi transparan jejak penalaran (*reasoning trace*) beserta persentase kecocokan.
-2. **Panel Admin Lengkap (`/admin/`)**:
-   - **Dashboard Ringkasan**: Statistik gejala, kondisi kulit, dan basis aturan aktif.
-   - **Kelola Gejala**: Tambah, ubah, dan hapus data gejala klinis.
-   - **Kelola Kondisi Kulit**: Manajemen jenis diagnosis dan rekomendasi saran penanganan.
-   - **Basis Aturan (Rules Engine)**: Pemetaan aturan relasi antara kondisi kulit dan gejala prasyarat dengan proteksi CSRF.
-3. **Riwayat Pemeriksaan (`/riwayat.php`)**:
+1. **Konsultasi Interaktif & Visual Monitor (Backward Chaining)**:
+   - Pemilihan **Fakta Klinis (F)** dan penentuan target **Masalah / Goal (M)** yang ingin diuji.
+   - Evaluasi inferensi **Goal-Driven Reasoning** untuk memverifikasi prasyarat aturan $(P_1 \land P_2 \dots) \rightarrow Q$.
+   - Tampilan visual diagram aturan bergaya **Slide Monitor** (badge chevron Fakta, Masalah, dan Aturan horizontal).
+   - Visualisasi transparan jejak penalaran (*reasoning trace*) lengkap dengan status `TERBUKTI` vs `GUGUR (BACKTRACK)`.
+2. **Skenario Latihan Interaktif (`/latihan.php`)**:
+   - Replikasi visual dan komputasional studi kasus latihan kuliah **Universitas KH. A. Wahab Hasbullah (UNWAHA)**:
+     - Fakta: `F1 (Hari Senin)`, `F2 (Yani Kuliah)`.
+     - Masalah: `M1 (Apakah Ali Masuk Kuliah?)`, `M2 (Apakah Ani Bolos Kuliah?)`.
+     - Aturan: `R6` s.d. `R10`.
+   - Menampilkan penelusuran berantai dan derivasi Modus Ponens secara interaktif dan real-time.
+3. **Panel Admin Lengkap (`/admin/`)**:
+   - **Dashboard Ringkasan**: Statistik data Fakta (F), Masalah (M), dan Aturan (R).
+   - **Kelola Fakta (Gejala)**: Tambah, ubah, dan hapus data fakta klinis.
+   - **Kelola Masalah (Kondisi Kulit)**: Manajemen jenis diagnosis dan rekomendasi saran penanganan.
+   - **Basis Aturan (Rules Engine)**: Pemetaan aturan relasi antara kondisi kulit dan fakta prasyarat dengan proteksi CSRF.
+4. **Riwayat Pemeriksaan (`/riwayat.php`)**:
    - Pencatatan otomatis hasil diagnosis, waktu pemeriksaan, dan gejala yang dipilih pengguna.
    - Fitur penghapusan riwayat pemeriksaan secara terisolasi.
-4. **Hybrid Database Layer**:
+5. **Hybrid Database Layer**:
    - Mendukung **MySQL / MariaDB** (untuk server produksi atau cloud).
    - Fallback otomatis ke **SQLite (`skinexpert.sqlite`)** terisi data awal lengkap, sehingga siap berjalan tanpa konfigurasi server database tambahan.
 

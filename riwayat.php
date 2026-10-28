@@ -101,10 +101,11 @@ while ($row = $query->fetch_assoc()) {
   <aside class="sidebar" id="sidebar">
     <p class="sidebar-title">Menu SkinExpert</p>
     <a href="index.php"><span class="icon">🏠</span> Beranda</a>
-    <a href="admin/gejala.php"><span class="icon">🔍</span> Data Gejala</a>
-    <a href="admin/kondisi.php"><span class="icon">🌿</span> Kondisi Kulit</a>
-    <a href="admin/aturan.php"><span class="icon">🧩</span> Basis Aturan</a>
-    <a href="konsultasi.php"><span class="icon">💬</span> Konsultasi</a>
+    <a href="konsultasi.php"><span class="icon">💬</span> Konsultasi (Kulit)</a>
+    <a href="latihan.php"><span class="icon">🧪</span> Skenario Latihan (UNWAHA)</a>
+    <a href="admin/gejala.php"><span class="icon">🔍</span> Data Fakta (F)</a>
+    <a href="admin/kondisi.php"><span class="icon">🌿</span> Data Masalah (M)</a>
+    <a href="admin/aturan.php"><span class="icon">🧩</span> Basis Aturan (R)</a>
     <a href="riwayat.php"><span class="icon">📋</span> Riwayat</a>
   </aside>
 
