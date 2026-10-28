@@ -59,8 +59,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 header("Location: kondisi.php?status=sukses");
                 exit;
-            } catch (mysqli_sql_exception $e) {
-                if ($e->getCode() == 1062) {
+            } catch (Throwable $e) {
+                $isUnique = ($e->getCode() == 1062) || (stripos($e->getMessage(), 'UNIQUE') !== false);
+                if ($isUnique) {
                     $pesan = "Kode kondisi sudah digunakan. Gunakan kode lain.";
                 } else {
                     $pesan = "Data gagal disimpan. Periksa kembali data.";

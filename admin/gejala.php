@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once __DIR__ . "/../config/database.php";
 
 $pesan = "";
@@ -39,8 +40,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 header("Location: gejala.php?status=sukses");
                 exit;
-            } catch (mysqli_sql_exception $e) {
-                $pesan = $e->getCode() == 1062
+            } catch (Throwable $e) {
+                $isUnique = ($e->getCode() == 1062) || (stripos($e->getMessage(), 'UNIQUE') !== false);
+                $pesan = $isUnique
                     ? "Kode gejala sudah digunakan. Gunakan kode lain."
                     : "Data gagal disimpan. Periksa kembali data yang dimasukkan.";
                 $jenisPesan = "pesan error";

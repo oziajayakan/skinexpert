@@ -20,6 +20,9 @@ while ($k = $kondisi_res->fetch_assoc()) {
     $daftar_kondisi[] = $k;
 }
 
+$fColors = ['c-green', 'c-orange', 'c-blue', 'c-yellow', 'c-purple', 'c-red', 'c-teal'];
+$badgeColors = ['c-green', 'c-orange', 'c-purple', 'c-teal', 'c-blue', 'c-red'];
+
 // Proses formulir konsultasi
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     $selected_ids = $_POST['gejala'] ?? [];
@@ -42,8 +45,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 
         try {
             $conn->begin_transaction();
-            $stmt = $conn->prepare("INSERT INTO pemeriksaan (tanggal, hasil) VALUES (datetime('now', 'localtime'), ?)");
-            $stmt->bind_param("s", $hasil_str);
+            $now = date('Y-m-d H:i:s');
+            $stmt = $conn->prepare("INSERT INTO pemeriksaan (tanggal, hasil) VALUES (?, ?)");
+            $stmt->bind_param("ss", $now, $hasil_str);
             $stmt->execute();
             $pemeriksaanId = $conn->insert_id;
             $stmt->close();
@@ -109,7 +113,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     </div>
 
     <?php if ($hasilDiagnosa === null): ?>
-      {# ==================== TAMPILAN FORMULIR SELEKSI FAKTA & MASALAH ==================== #}
+      <!-- ==================== TAMPILAN FORMULIR SELEKSI FAKTA & MASALAH ==================== -->
       <div class="card">
         <h1>💬 Konsultasi Sistem Pakar Kulit Wajah</h1>
         <p class="muted" style="margin-bottom:1.5rem">
@@ -204,7 +208,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
       </div>
 
     <?php else: ?>
-      {# ==================== TAMPILAN HASIL & VISUAL MONITOR ==================== #}
+      <!-- ==================== TAMPILAN HASIL & VISUAL MONITOR ==================== -->
       <?php 
         $top = $hasilDiagnosa['top'];
         $trace = $hasilDiagnosa['trace'];

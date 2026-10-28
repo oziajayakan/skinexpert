@@ -186,18 +186,22 @@ function evaluasiBackwardChaining($conn, array $selected_ids, ?int $targetGoalId
         ORDER BY r.id ASC, rg.gejala_id ASC
     ");
 
-    $rule_map = [];  // kondisi_id => [gejala_ids]
-    $rule_info = []; // kondisi_id => [rule_kode, rule_nama, rule_id]
-    while ($r = $rules_res->fetch_assoc()) {
-        $kid = (int)$r['kondisi_kulit_id'];
-        $gid = (int)$r['gejala_id'];
-        $rule_map[$kid][] = $gid;
-        if (!isset($rule_info[$kid])) {
-            $rule_info[$kid] = [
-                'id' => (int)$r['rule_id'],
-                'kode' => $r['rule_kode'],
-                'nama' => $r['rule_nama']
-            ];
+    $rule_list = [];
+    if ($rules_res) {
+        while ($r = $rules_res->fetch_assoc()) {
+            $rid = (int)$r['rule_id'];
+            $kid = (int)$r['kondisi_kulit_id'];
+            $gid = (int)$r['gejala_id'];
+            if (!isset($rule_list[$rid])) {
+                $rule_list[$rid] = [
+                    'id' => $rid,
+                    'kode' => $r['rule_kode'],
+                    'nama' => $r['rule_nama'],
+                    'kondisi_id' => $kid,
+                    'subgoals' => []
+                ];
+            }
+            $rule_list[$rid]['subgoals'][] = $gid;
         }
     }
 
@@ -212,64 +216,82 @@ function evaluasiBackwardChaining($conn, array $selected_ids, ?int $targetGoalId
 
     foreach ($kondisi_all as $k) {
         $kid = (int)$k['id'];
-        $subgoals = $rule_map[$kid] ?? [];
-        if (empty($subgoals)) {
+        $rulesForGoal = array_values(array_filter($rule_list, fn($r) => $r['kondisi_id'] === $kid));
+
+        if (empty($rulesForGoal)) {
+            $trace[] = [
+                'kondisi' => $k,
+                'rule' => ['kode' => '-', 'nama' => 'Tidak Ada Aturan Aktif'],
+                'subgoals' => [],
+                'all_gejala' => [],
+                'matched' => [],
+                'missing' => [],
+                'matched_gejala' => [],
+                'missing_gejala' => [],
+                'score' => 0,
+                'full' => false,
+                'status' => 'TIDAK_ADA_ATURAN',
+                'formula' => '- → ' . $k['kode'],
+                'modus_ponens' => "Tidak ada aturan aktif di basis pengetahuan yang dapat membuktikan hipotesis {$k['kode']} ({$k['nama']})."
+            ];
             continue;
         }
 
-        $matched = array_values(array_intersect($subgoals, $selected_set));
-        $missing = array_values(array_diff($subgoals, $selected_set));
-        $score = round((count($matched) / count($subgoals)) * 100, 1);
-        $full = empty($missing); // Seluruh premis (P1 ∧ P2 ∧ ... Pn) TRUE
+        foreach ($rulesForGoal as $rule) {
+            $subgoals = $rule['subgoals'];
+            $matched = array_values(array_intersect($subgoals, $selected_set));
+            $missing = array_values(array_diff($subgoals, $selected_set));
+            $score = !empty($subgoals) ? round((count($matched) / count($subgoals)) * 100, 1) : 0;
+            $full = !empty($subgoals) && empty($missing); // Seluruh premis (P1 ∧ P2 ∧ ... Pn) TRUE
 
-        // Ambil objek gejala untuk tampilan rapi
-        $matched_gejala = [];
-        foreach ($matched as $mid) {
-            if (isset($gejala_map[$mid])) {
-                $matched_gejala[] = $gejala_map[$mid];
+            // Ambil objek gejala untuk tampilan rapi
+            $matched_gejala = [];
+            foreach ($matched as $mid) {
+                if (isset($gejala_map[$mid])) {
+                    $matched_gejala[] = $gejala_map[$mid];
+                }
             }
-        }
 
-        $missing_gejala = [];
-        foreach ($missing as $mid) {
-            if (isset($gejala_map[$mid])) {
-                $missing_gejala[] = $gejala_map[$mid];
+            $missing_gejala = [];
+            foreach ($missing as $mid) {
+                if (isset($gejala_map[$mid])) {
+                    $missing_gejala[] = $gejala_map[$mid];
+                }
             }
-        }
 
-        $all_gejala = [];
-        foreach ($subgoals as $sid) {
-            if (isset($gejala_map[$sid])) {
-                $all_gejala[] = $gejala_map[$sid];
+            $all_gejala = [];
+            foreach ($subgoals as $sid) {
+                if (isset($gejala_map[$sid])) {
+                    $all_gejala[] = $gejala_map[$sid];
+                }
             }
-        }
 
-        $rInfo = $rule_info[$kid] ?? ['kode' => 'R?', 'nama' => 'Aturan'];
-        $kodeGejala = array_map(fn($g) => $g['kode'], $all_gejala);
-        $formula_str = "(" . implode(" ∧ ", $kodeGejala) . ") → " . $k['kode'];
+            $kodeGejala = array_map(fn($g) => $g['kode'], $all_gejala);
+            $formula_str = "(" . implode(" ∧ ", $kodeGejala) . ") → " . $k['kode'];
 
-        $traceItem = [
-            'kondisi' => $k,
-            'rule' => $rInfo,
-            'subgoals' => $subgoals,
-            'all_gejala' => $all_gejala,
-            'matched' => $matched,
-            'missing' => $missing,
-            'matched_gejala' => $matched_gejala,
-            'missing_gejala' => $missing_gejala,
-            'score' => $score,
-            'full' => $full,
-            'status' => $full ? 'TERBUKTI' : (count($matched) > 0 ? 'GUGUR_BACKTRACK' : 'TIDAK_TERPENUHI'),
-            'formula' => $formula_str,
-            'modus_ponens' => $full 
-                ? "Semua premis (" . implode(" & ", $kodeGejala) . ") terpenuhi pada fakta pengguna. Berdasarkan Modus Ponens, hipotesis {$k['kode']} ({$k['nama']}) dinyatakan TERBUKTI (BENAR)."
-                : "Premis aturan belum lengkap (" . count($matched) . " dari " . count($subgoals) . " fakta terpenuhi). Aturan gugur dan sistem melakukan backtracking."
-        ];
+            $traceItem = [
+                'kondisi' => $k,
+                'rule' => $rule,
+                'subgoals' => $subgoals,
+                'all_gejala' => $all_gejala,
+                'matched' => $matched,
+                'missing' => $missing,
+                'matched_gejala' => $matched_gejala,
+                'missing_gejala' => $missing_gejala,
+                'score' => $score,
+                'full' => $full,
+                'status' => $full ? 'TERBUKTI' : (count($matched) > 0 ? 'GUGUR_BACKTRACK' : 'TIDAK_TERPENUHI'),
+                'formula' => $formula_str,
+                'modus_ponens' => $full 
+                    ? "Semua premis (" . implode(" & ", $kodeGejala) . ") terpenuhi pada fakta pengguna. Berdasarkan Modus Ponens, hipotesis {$k['kode']} ({$k['nama']}) dinyatakan TERBUKTI (BENAR)."
+                    : "Premis aturan belum lengkap (" . count($matched) . " dari " . count($subgoals) . " fakta terpenuhi). Aturan gugur dan sistem melakukan backtracking."
+            ];
 
-        $trace[] = $traceItem;
+            $trace[] = $traceItem;
 
-        if ($full) {
-            $goals_terbukti[] = $traceItem;
+            if ($full) {
+                $goals_terbukti[] = $traceItem;
+            }
         }
     }
 

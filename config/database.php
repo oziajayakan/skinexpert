@@ -1,5 +1,19 @@
 <?php
 
+// Definisi fallback jika ekstensi mysqli tidak aktif di serverless/lingkungan tertentu
+if (!defined('MYSQLI_ASSOC')) {
+    define('MYSQLI_ASSOC', 1);
+}
+if (!defined('MYSQLI_NUM')) {
+    define('MYSQLI_NUM', 2);
+}
+if (!defined('MYSQLI_BOTH')) {
+    define('MYSQLI_BOTH', 3);
+}
+if (!class_exists('mysqli_sql_exception')) {
+    class mysqli_sql_exception extends Exception {}
+}
+
 $host = getenv('DB_HOST') ?: "localhost";
 $username = getenv('DB_USER') ?: "root";
 $password = getenv('DB_PASS') !== false ? getenv('DB_PASS') : "";
@@ -8,8 +22,17 @@ $port = getenv('DB_PORT') ? (int)getenv('DB_PORT') : 3306;
 
 $conn = null;
 
-// 1. Coba koneksi MySQL / MariaDB (lokal atau cloud via Environment Variables)
-if (class_exists('mysqli')) {
+// Hanya coba MySQL jika DB_HOST disetel di environment variables atau jika port 3306 lokal aktif (timeout 0.1s)
+$tryMysql = !empty(getenv('DB_HOST'));
+if (!$tryMysql && class_exists('mysqli')) {
+    $fp = @fsockopen("127.0.0.1", $port, $errno, $errstr, 0.1);
+    if ($fp) {
+        fclose($fp);
+        $tryMysql = true;
+    }
+}
+
+if ($tryMysql && class_exists('mysqli')) {
     mysqli_report(MYSQLI_REPORT_OFF);
     try {
         $mysqli = @new mysqli($host, $username, $password, $database, $port);
@@ -35,17 +58,18 @@ if ($conn === null) {
     $baseSqlite = __DIR__ . '/../skinexpert.sqlite';
 
     if ($isVercel) {
-        // Lingkungan Vercel Serverless bersifat Read-Only, salin DB ke /tmp agar operasi tulis (INSERT riwayat, CRUD) berjalan lancar
+        // Lingkungan Vercel Serverless bersifat Read-Only, salin DB ke /tmp agar operasi tulis berjalan lancar
         $sqlitePath = '/tmp/skinexpert.sqlite';
-        if (!file_exists($sqlitePath) && file_exists($baseSqlite)) {
-            copy($baseSqlite, $sqlitePath);
+        $needsCopy = !file_exists($sqlitePath) || (filesize($sqlitePath) === 0) || (file_exists($baseSqlite) && filemtime($baseSqlite) > filemtime($sqlitePath));
+        if ($needsCopy && file_exists($baseSqlite)) {
+            @copy($baseSqlite, $sqlitePath);
         } elseif (!file_exists($sqlitePath)) {
-            touch($sqlitePath);
+            @touch($sqlitePath);
         }
     } else {
         $sqlitePath = $baseSqlite;
         if (!file_exists($sqlitePath)) {
-            touch($sqlitePath);
+            @touch($sqlitePath);
         }
     }
 
@@ -181,11 +205,17 @@ if ($conn === null) {
         }
 
         public function begin_transaction(): bool {
-            return $this->pdo->beginTransaction();
+            if (!$this->pdo->inTransaction()) {
+                return $this->pdo->beginTransaction();
+            }
+            return true;
         }
 
         public function commit(): bool {
-            return $this->pdo->commit();
+            if ($this->pdo->inTransaction()) {
+                return $this->pdo->commit();
+            }
+            return true;
         }
 
         public function rollback(): bool {
@@ -199,9 +229,25 @@ if ($conn === null) {
             return true;
         }
 
+        public function real_escape_string(string $str): string {
+            $quoted = $this->pdo->quote($str);
+            return substr($quoted, 1, -1);
+        }
+
+        public function escape_string(string $str): string {
+            return $this->real_escape_string($str);
+        }
+
+        public function close(): bool {
+            return true;
+        }
+
         public function __get(string $name) {
             if ($name === 'insert_id') {
                 return (int) $this->pdo->lastInsertId();
+            }
+            if ($name === 'affected_rows') {
+                return $this->affected_rows;
             }
             return null;
         }

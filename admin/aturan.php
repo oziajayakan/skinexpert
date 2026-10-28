@@ -168,11 +168,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 } catch (Throwable $e) {
                     $conn->rollback();
 
-                    if ($e instanceof mysqli_sql_exception &&
-                        $e->getCode() == 1062) {
+                    $isUnique = ($e->getCode() == 1062) || (stripos($e->getMessage(), 'UNIQUE') !== false);
+                    if ($isUnique) {
                         $pesan = "Kode aturan sudah digunakan.";
                     } else {
-                        $pesan = "Aturan gagal disimpan. Periksa data lalu coba lagi.";
+                        $pesan = "Aturan gagal disimpan. Periksa data lalu coba lagi: " . $e->getMessage();
                     }
                     $jenisPesan = "pesan error";
                 }
