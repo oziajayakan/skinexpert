@@ -13,18 +13,16 @@ Sistem ini membantu pengguna memvalidasi hipotesis kondisi kulit wajah (Kulit Ke
    - **Interactive Follow-Up Verification**: Jika pengguna memilih gejala parsial, sistem secara otomatis mengajukan pertanyaan verifikasi lanjutan yang relevan untuk membuktikan hipotesis dengan 1 klik.
    - **Reasoning Trace Transparan**: Jejak eksekusi inferensi lengkap (premis terpenuhi vs belum terpenuhi) dapat diperiksa melalui panel trace log teknis.
 2. **Desain UI Modern & Vector SVG Icons**:
-   - Tampilan bersih, minimalis, dan berfokus pada panduan praktis (tanpa dinding teks teori yang membebani pengguna).
+   - Tampilan bersih, minimalis, dan berfokus pada panduan klinis kesehatan kulit.
    - Seluruh ikon menggunakan grafis vektor SVG tajam (`includes/icons.php`) menggantikan emoji sistem agar konsisten di semua sistem operasi dan perangkat mobile.
-3. **Skenario Latihan Interaktif (`/latihan.php`)**:
-   - Demonstrasi visual dan komputasional studi kasus penalaran Backward Chaining berbasis materi akademik UNWAHA (Fakta $F_1, F_2$ $\rightarrow$ Masalah $M_1, M_2$ melalui Aturan $R_6-R_{10}$).
-4. **Knowledge Base Admin (`/admin/`)**:
+3. **Knowledge Base Admin (`/admin/`)**:
    - **Fakta Gejala (G)**: Manajemen 15 gejala klinis wajah ($G_{01}-G_{15}$).
    - **Kondisi Kulit (H)**: Manajemen 7 target hipotesis kondisi kulit ($H_{01}-H_{07}$) beserta rekomendasi perawatan.
    - **Basis Aturan (R)**: Konfigurasi 14 aturan implikasi ($R_{01}-R_{14}$) lengkap dengan proteksi keamanan CSRF.
-5. **Riwayat Pemeriksaan (`/riwayat.php`)**:
+4. **Riwayat Pemeriksaan (`/riwayat.php`)**:
    - Pencatatan otomatis waktu konsultasi, gejala yang dipilih, dan status kesimpulan diagnosis.
    - Fitur penghapusan riwayat pemeriksaan per data.
-6. **Dual Database Engine (SQLite & MySQL)**:
+5. **Dual Database Engine (SQLite & MySQL)**:
    - Terpasang database SQLite mandiri (`skinexpert.sqlite`) siap pakai tanpa konfigurasi tambahan.
    - Mendukung integrasi mulus ke database cloud MySQL/MariaDB.
 
@@ -99,7 +97,6 @@ skinexpert/
 │   └── style.css               # Desain UI/UX SkinExpert, token CSS & komponen SVG
 ├── index.php                   # Beranda & panduan praktis
 ├── konsultasi.php              # Halaman konsultasi & inferensi Backward Chaining
-├── latihan.php                 # Simulasi pengujian logika UNWAHA
 ├── riwayat.php                 # Riwayat pemeriksaan pengguna
 ├── skinexpert.sqlite           # Basis data SQLite lokal siap pakai
 ├── skinexpert_db.sql           # Skema DDL & dataset SQL lengkap

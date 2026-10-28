@@ -220,7 +220,6 @@ if (!isset($judulHalaman)) {
         <a href="kondisi.php" style="display:inline-flex;align-items:center;gap:6px;"><?= icon('target', '', 15) ?> Kondisi Kulit (H)</a>
         <a href="aturan.php" style="display:inline-flex;align-items:center;gap:6px;"><?= icon('rule', '', 15) ?> Basis Aturan (R)</a>
         <a href="../riwayat.php" style="display:inline-flex;align-items:center;gap:6px;"><?= icon('clipboard', '', 15) ?> Riwayat</a>
-        <a href="../latihan.php" style="display:inline-flex;align-items:center;gap:6px;"><?= icon('flask', '', 15) ?> Skenario Latihan</a>
         <a href="../index.php" style="display:inline-flex;align-items:center;gap:6px;"><?= icon('leaf', '', 15) ?> Web Utama</a>
     </nav>
 </header>

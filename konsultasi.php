@@ -92,11 +92,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     <p class="sidebar-title">Menu SkinExpert</p>
     <a href="index.php"><span class="icon"><?= icon('home', '', 18) ?></span> Beranda</a>
     <a href="konsultasi.php"><span class="icon"><?= icon('chat', '', 18) ?></span> Konsultasi Kulit</a>
-    <a href="latihan.php"><span class="icon"><?= icon('flask', '', 18) ?></span> Skenario Latihan (UNWAHA)</a>
+    <a href="riwayat.php"><span class="icon"><?= icon('clipboard', '', 18) ?></span> Riwayat Pemeriksaan</a>
     <a href="admin/gejala.php"><span class="icon"><?= icon('search', '', 18) ?></span> Data Fakta Gejala (G)</a>
     <a href="admin/kondisi.php"><span class="icon"><?= icon('target', '', 18) ?></span> Data Kondisi Kulit (H)</a>
     <a href="admin/aturan.php"><span class="icon"><?= icon('rule', '', 18) ?></span> Basis Aturan (R)</a>
-    <a href="riwayat.php"><span class="icon"><?= icon('clipboard', '', 18) ?></span> Riwayat Pemeriksaan</a>
   </aside>
 
   <main>
@@ -125,7 +124,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
           <span style="color:var(--primary);"><?= icon('chat', '', 28) ?></span> Konsultasi Pra-Diagnosis Kondisi Kulit
         </h1>
         <p class="muted" style="margin-bottom:1.5rem;">
-          Pilih gejala klinis yang Anda rasakan. Sistem pakar akan menelusuri mundur (Backward Chaining) untuk membuktikan dugaan kondisi kulit wajah Anda.
+          Pilih keluhan klinis yang Anda rasakan di wajah. Sistem pakar akan menelusuri mundur (Backward Chaining) untuk membuktikan dugaan kondisi kulit Anda.
         </p>
 
         <form method="post" action="konsultasi.php">
@@ -148,18 +147,12 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 </div>
               </label>
 
-              <?php 
-                $badgeColors = ['c-green', 'c-orange', 'c-purple', 'c-teal', 'c-blue', 'c-red', 'c-yellow'];
-                $idx = 0;
-                foreach ($daftar_kondisi as $k): 
-                  $bColor = $badgeColors[$idx % count($badgeColors)];
-                  $idx++;
-              ?>
+              <?php foreach ($daftar_kondisi as $k): ?>
                 <label class="checkbox-item" style="cursor:pointer;">
                   <input type="radio" name="target_goal_id" value="<?= $k['id'] ?>" style="accent-color:var(--primary);width:18px;height:18px;">
-                  <div>
-                    <span class="chevron-badge <?= $bColor ?>" style="font-size:0.75rem;padding:0.2rem 0.7rem;min-width:48px;"><?= htmlspecialchars($k['kode']) ?></span>
-                    <strong style="margin-left:0.2rem;font-size:0.92rem;"><?= htmlspecialchars($k['nama']) ?></strong>
+                  <div style="display:flex;align-items:center;gap:0.5rem;">
+                    <span class="code-badge badge-h"><?= htmlspecialchars($k['kode']) ?></span>
+                    <strong style="font-size:0.92rem;"><?= htmlspecialchars($k['nama']) ?></strong>
                   </div>
                 </label>
               <?php endforeach; ?>
@@ -180,16 +173,11 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             <input type="text" id="filter" placeholder="Ketik untuk mencari gejala..." class="search-input" autocomplete="off">
             
             <div class="checkbox-grid" id="gejala-list">
-              <?php 
-                $fIdx = 0;
-                foreach ($daftar_gejala as $g): 
-                  $cColor = $fColors[$fIdx % count($fColors)];
-                  $fIdx++;
-              ?>
+              <?php foreach ($daftar_gejala as $g): ?>
                 <label class="checkbox-item" data-nama="<?= htmlspecialchars(strtolower($g['nama'])) ?>">
                   <input type="checkbox" name="gejala[]" value="<?= $g['id'] ?>" onchange="updateCounter()">
                   <div style="display:flex;align-items:center;gap:0.6rem;width:100%;">
-                    <span class="chevron-badge <?= $cColor ?>" style="font-size:0.78rem;padding:0.25rem 0.8rem;min-width:52px;"><?= htmlspecialchars($g['kode']) ?></span>
+                    <span class="code-badge badge-g"><?= htmlspecialchars($g['kode']) ?></span>
                     <div>
                       <strong><?= htmlspecialchars($g['nama']) ?></strong>
                       <div class="muted" style="font-size:0.78rem;"><?= htmlspecialchars($g['deskripsi']) ?></div>
@@ -294,7 +282,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             </p>
 
             <div style="display:flex;align-items:center;gap:0.8rem;background:white;padding:0.9rem 1.1rem;border-radius:10px;border:1px solid #bae6fd;margin-bottom:1rem;">
-              <span class="chevron-badge c-blue" style="font-size:0.8rem;min-width:55px;">
+              <span class="code-badge badge-g">
                 <?= htmlspecialchars($pertanyaanLanjutan['gejala']['kode']) ?>
               </span>
               <div>
@@ -348,11 +336,11 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
           <?php foreach ($trace as $t): ?>
             <div style="background:white;border-radius:10px;padding:1rem;border:1px solid <?= $t['full'] ? '#86efac' : '#e2e8f0' ?>;">
               <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.5rem;">
-                <div>
-                  <span class="chevron-badge <?= $t['full'] ? 'c-green' : 'c-blue' ?>" style="font-size:0.75rem;padding:0.2rem 0.6rem;min-width:48px;">
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                  <span class="code-badge <?= $t['full'] ? 'badge-g' : 'badge-r' ?>">
                     <?= htmlspecialchars($t['rule']['kode']) ?>
                   </span>
-                  <strong style="margin-left:0.4rem;font-size:0.92rem;">
+                  <strong style="font-size:0.92rem;">
                     <?= htmlspecialchars($t['kondisi']['nama']) ?> (<?= htmlspecialchars($t['kondisi']['kode']) ?>)
                   </strong>
                 </div>

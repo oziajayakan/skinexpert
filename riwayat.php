@@ -103,11 +103,10 @@ while ($row = $query->fetch_assoc()) {
     <p class="sidebar-title">Menu SkinExpert</p>
     <a href="index.php"><span class="icon"><?= icon('home', '', 18) ?></span> Beranda</a>
     <a href="konsultasi.php"><span class="icon"><?= icon('chat', '', 18) ?></span> Konsultasi Kulit</a>
-    <a href="latihan.php"><span class="icon"><?= icon('flask', '', 18) ?></span> Skenario Latihan (UNWAHA)</a>
-    <a href="admin/gejala.php"><span class="icon"><?= icon('search', '', 18) ?></span> Data Fakta Gejala (G)</a>
-    <a href="admin/kondisi.php"><span class="icon"><?= icon('leaf', '', 18) ?></span> Data Kondisi Kulit (H)</a>
-    <a href="admin/aturan.php"><span class="icon"><?= icon('rule', '', 18) ?></span> Basis Aturan (R)</a>
     <a href="riwayat.php"><span class="icon"><?= icon('clipboard', '', 18) ?></span> Riwayat Pemeriksaan</a>
+    <a href="admin/gejala.php"><span class="icon"><?= icon('search', '', 18) ?></span> Data Fakta Gejala (G)</a>
+    <a href="admin/kondisi.php"><span class="icon"><?= icon('target', '', 18) ?></span> Data Kondisi Kulit (H)</a>
+    <a href="admin/aturan.php"><span class="icon"><?= icon('rule', '', 18) ?></span> Basis Aturan (R)</a>
   </aside>
 
   <main>

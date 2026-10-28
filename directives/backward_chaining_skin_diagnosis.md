@@ -40,5 +40,6 @@ Mengembangkan sistem pakar pra-diagnosis dan identifikasi kondisi kulit wajah be
 - **Ikon Vektor SVG**: Menggunakan ikon SVG stroke presisi tinggi via `includes/icons.php` (`icon('name', $class, $size)`) tanpa emoji sistem demi konsistensi tampilan lintas sistem operasi.
 - **Hasil Aksi Nyata**: Menampilkan kesimpulan pra-diagnosis yang jelas, panduan perawatan yang dapat segera diterapkan, dan opsi verifikasi 1-klik.
 - **Trace Teknis Tersembunyi Rapi**: Formula Modus Ponens dan detail premis disimpan dalam accordion collapsible (`<details>`) agar layar tetap bersih.
-- **Arsitektur Ramping (Zero Waste)**: Tidak menyimpan file legacy (Flask/template usang telah dibersihkan sepenuhnya).
+- **Tema Sistem Pakar Medis & Klinis**: Desain antarmuka berorientasi klinis murni (kartu diagnosis rapi, badge kode pill presisi, dan palette warna emerald/teal higienis) tanpa elemen simulasi slide/kelas.
+- **Arsitektur Ramping (Zero Waste)**: Tidak menyimpan file legacy atau modul simulasi yang menyimpang dari tema sistem pakar kulit.
 

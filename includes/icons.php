@@ -32,7 +32,7 @@ SVG,
 </svg>
 SVG,
 
-        // Latihan / Lab / Flask
+        // Flask / Lab / Research
         'flask' => <<<SVG
 <svg class="{$classAttr}" width="{$s}" height="{$s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
   <path d="M10 2v7.31L4.1 19.34A2 2 0 0 0 5.8 22h12.4a2 2 0 0 0 1.7-2.66L14 9.31V2"/>
